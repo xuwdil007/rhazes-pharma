@@ -23,7 +23,6 @@ import { Layout } from "../components/layout/SiteLayout.jsx";
 import {
   Btn,
   Capability,
-  ProductTooltipRefraction,
   Eyebrow,
   PageHero,
   Stats,
@@ -785,8 +784,6 @@ export function Quality() {
   );
 }
 export function Products() {
-  const [activeProduct, setActiveProduct] = useState(null);
-
   return (
     <Layout>
       <PageHero
@@ -819,22 +816,11 @@ export function Products() {
         </div>
         <div className="product-list">
           {productGroups.map((item, i) => (
-            <article
-              className="product-category"
-              key={item.slug}
-              tabIndex="0"
-              onMouseEnter={() => setActiveProduct(item.slug)}
-              onMouseLeave={() => setActiveProduct(null)}
-              onFocus={() => setActiveProduct(item.slug)}
-              onBlur={() => setActiveProduct(null)}
-            >
+            <article className="product-category" key={item.slug} tabIndex="0">
               <span>{String(i + 1).padStart(2, "0")}</span>
               <h3>{item.title}</h3>
               <HeartPulse />
               <div className="product-tooltip" role="tooltip">
-                <ProductTooltipRefraction
-                  active={activeProduct === item.slug}
-                />
                 <small>О категории</small>
                 <p>{item.description}</p>
               </div>

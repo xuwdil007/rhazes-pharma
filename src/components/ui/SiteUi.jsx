@@ -53,54 +53,6 @@ export function ModalGlassRefraction({ active = true }) {
   );
 }
 
-export function ProductTooltipRefraction({ active }) {
-  const layerRef = useRef(null);
-
-  useEffect(() => {
-    const layer = layerRef.current;
-    if (!active || !layer) return undefined;
-    const source = document.querySelector(".products-catalog");
-    if (!source) return undefined;
-
-    const clone = source.cloneNode(true);
-    clone
-      .querySelectorAll(".product-tooltip, [id]")
-      .forEach((element) =>
-        element.matches(".product-tooltip")
-          ? element.remove()
-          : element.removeAttribute("id"),
-      );
-    clone.classList.add("product-tooltip-refraction-clone");
-    clone.setAttribute("aria-hidden", "true");
-    clone.setAttribute("inert", "");
-    layer.replaceChildren(clone);
-
-    const syncClone = () => {
-      const sourceBounds = source.getBoundingClientRect();
-      const layerBounds = layer.getBoundingClientRect();
-      clone.style.width = `${sourceBounds.width}px`;
-      clone.style.transform = `translate3d(${sourceBounds.left - layerBounds.left}px, ${sourceBounds.top - layerBounds.top}px, 0)`;
-    };
-
-    syncClone();
-    window.addEventListener("scroll", syncClone, { passive: true });
-    window.addEventListener("resize", syncClone);
-    return () => {
-      window.removeEventListener("scroll", syncClone);
-      window.removeEventListener("resize", syncClone);
-      layer.replaceChildren();
-    };
-  }, [active]);
-
-  return (
-    <div
-      ref={layerRef}
-      className="product-tooltip-refraction"
-      aria-hidden="true"
-    />
-  );
-}
-
 export function AnimatedNumber({ value, duration = 1400 }) {
   const elementRef = useRef(null);
   const [displayValue, setDisplayValue] = useState("0");
