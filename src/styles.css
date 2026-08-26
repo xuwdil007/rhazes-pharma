@@ -139,7 +139,7 @@ header {
   z-index: 2;
 }
 .site-header-scrolled .navwrap {
-  background: rgba(246, 252, 249, 0.09);
+  background: rgba(35, 49, 44, 0.62);
   backdrop-filter: blur(10px) saturate(155%) contrast(1.03);
   -webkit-backdrop-filter: blur(10px) saturate(155%) contrast(1.03);
   border-bottom-color: rgba(255, 255, 255, 0.36);
@@ -429,7 +429,7 @@ nav a.active {
     -webkit-backdrop-filter: blur(12px) saturate(125%);
   }
   .site-header-scrolled .navwrap > nav a {
-    color: rgba(15, 30, 25, 0.9);
+    color: rgba(255, 255, 255, 0.9);
   }
   .site-header-scrolled .navwrap > nav a:hover {
     border-color: rgba(255, 255, 255, 0.44);
