@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { navigation as nav } from "../data/siteContent.js";
 import { Logo } from "../components/layout/SiteLayout.jsx";
+import staticContent from "../../backend/data/content.json";
 import {
   About,
   Contacts,
@@ -139,18 +140,21 @@ export function CmsRuntime({ route }) {
     let cancelled = false;
     let contentObserver;
     let contentFrame = 0;
-    const local = JSON.parse(
-      localStorage.getItem("rhazes-cms-content") || "{}",
-    );
+    const local = {
+      ...staticContent,
+      ...JSON.parse(localStorage.getItem("rhazes-cms-content") || "{}"),
+    };
 
     async function load() {
       let content = local;
-      try {
-        const response = await fetch(`/api/content?t=${Date.now()}`, {
-          cache: "no-store",
-        });
-        if (response.ok) content = await response.json();
-      } catch {}
+      if (import.meta.env.VITE_STATIC_SITE !== "true") {
+        try {
+          const response = await fetch(`/api/content?t=${Date.now()}`, {
+            cache: "no-store",
+          });
+          if (response.ok) content = await response.json();
+        } catch {}
+      }
       if (cancelled) return;
       localStorage.setItem("rhazes-cms-content", JSON.stringify(content));
 
@@ -967,7 +971,7 @@ export function Admin() {
             <span>Управление сайтом</span>
             <h1>{group.name}</h1>
           </div>
-          <a href="/#/">
+          <a href={`${import.meta.env.BASE_URL}#/`}>
             Открыть сайт <ArrowUpRight />
           </a>
         </header>

@@ -63,7 +63,7 @@ export function Logo({ light = false }) {
     >
       <img
         className="logo-main-image"
-        src="/assets/rhazes-logo.png"
+        src={`${import.meta.env.BASE_URL}assets/rhazes-logo.png`}
         alt="Rhazes"
       />
     </a>

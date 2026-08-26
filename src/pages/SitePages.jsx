@@ -38,7 +38,7 @@ export function Home() {
   return (
     <Layout>
       <section className="hero">
-        <img src="/assets/pharma-hero.png" />
+        <img src={`${import.meta.env.BASE_URL}assets/pharma-hero.png`} />
         <div className="hero-shade" />
         <div className="hero-content">
           <Eyebrow>Фармацевтика нового поколения</Eyebrow>
@@ -103,25 +103,25 @@ export function Home() {
             n="01"
             title="Таблетки"
             value="1,4 млрд"
-            image="/assets/form-tablets.png"
+            image={`${import.meta.env.BASE_URL}assets/form-tablets.png`}
           />
           <Capability
             n="02"
             title="Капсулы"
             value="300 млн"
-            image="/assets/form-capsules.png"
+            image={`${import.meta.env.BASE_URL}assets/form-capsules.png`}
           />
           <Capability
             n="03"
             title="Жидкие препараты"
             value="21 млн"
-            image="/assets/form-liquid.png"
+            image={`${import.meta.env.BASE_URL}assets/form-liquid.png`}
           />
           <Capability
             n="04"
             title="Мази, кремы и гели"
             value="13 млн"
-            image="/assets/form-topical.png"
+            image={`${import.meta.env.BASE_URL}assets/form-topical.png`}
           />
         </div>
       </section>
@@ -346,7 +346,7 @@ export function Production() {
       <section className="engineering">
         <div className="eng-photo">
           <img
-            src="/assets/engineering-infrastructure.png"
+            src={`${import.meta.env.BASE_URL}assets/engineering-infrastructure.png`}
             alt="Инженерные системы фармацевтического производства"
           />
         </div>
