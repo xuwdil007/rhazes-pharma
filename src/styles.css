@@ -139,7 +139,7 @@ header {
   z-index: 2;
 }
 .site-header-scrolled .navwrap {
-  background: rgba(10, 20, 17, 0.82);
+  background: rgba(3, 10, 8, 0.95);
   backdrop-filter: blur(10px) saturate(155%) contrast(1.03);
   -webkit-backdrop-filter: blur(10px) saturate(155%) contrast(1.03);
   border-bottom-color: rgba(255, 255, 255, 0.36);
@@ -3491,7 +3491,7 @@ footer {
     padding: 0 22px;
   }
   .site-header-scrolled .navwrap {
-    background: rgba(4, 12, 9, 0.94);
+    background: rgba(1, 6, 4, 0.98);
   }
   .logo {
     min-width: auto;
