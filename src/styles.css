@@ -3490,16 +3490,6 @@ footer {
     height: 74px;
     padding: 0 22px;
   }
-  .site-header-scrolled .navwrap {
-    background: rgba(255, 255, 255, 0.9);
-    border-bottom-color: rgba(20, 35, 30, 0.1);
-    box-shadow: 0 14px 32px -24px rgba(10, 30, 23, 0.42);
-    backdrop-filter: blur(14px) saturate(120%);
-    -webkit-backdrop-filter: blur(14px) saturate(120%);
-  }
-  .site-header-scrolled .navwrap > .logo img {
-    filter: none;
-  }
   .logo {
     min-width: auto;
   }
