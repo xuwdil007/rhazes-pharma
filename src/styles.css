@@ -2498,6 +2498,7 @@ nav a.active {
   grid-column: 1/-1;
 }
 .contact form .btn {
+  grid-column: 1 / -1;
   width: max-content;
   min-height: 0;
   height: 46px;
