@@ -3490,6 +3490,9 @@ footer {
     height: 74px;
     padding: 0 22px;
   }
+  .site-header-scrolled .navwrap {
+    background: rgba(4, 12, 9, 0.94);
+  }
   .logo {
     min-width: auto;
   }
