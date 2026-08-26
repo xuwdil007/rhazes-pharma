@@ -139,7 +139,7 @@ header {
   z-index: 2;
 }
 .site-header-scrolled .navwrap {
-  background: rgba(35, 49, 44, 0.62);
+  background: rgba(10, 20, 17, 0.82);
   backdrop-filter: blur(10px) saturate(155%) contrast(1.03);
   -webkit-backdrop-filter: blur(10px) saturate(155%) contrast(1.03);
   border-bottom-color: rgba(255, 255, 255, 0.36);
