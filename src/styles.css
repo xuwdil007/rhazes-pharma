@@ -1227,7 +1227,7 @@ nav a.active {
   max-width: min(880px, 68%);
   position: relative;
   z-index: 2;
-  overflow: hidden;
+  overflow: visible;
   padding: 34px 40px 38px;
   border: 0;
   border-radius: var(--r-lg);
