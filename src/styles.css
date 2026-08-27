@@ -744,8 +744,8 @@ nav a.active {
   padding: 18px 20px;
   background: linear-gradient(
     165deg,
-    rgba(38, 53, 48, 0.78),
-    rgba(18, 31, 27, 0.66)
+    rgba(30, 44, 39, 0.92),
+    rgba(12, 24, 20, 0.86)
   );
   backdrop-filter: var(--blur-sm);
   -webkit-backdrop-filter: var(--blur-sm);
@@ -1290,8 +1290,8 @@ nav a.active {
   border-radius: var(--r-md);
   background: linear-gradient(
     145deg,
-    rgba(38, 53, 48, 0.78),
-    rgba(18, 31, 27, 0.66)
+    rgba(30, 44, 39, 0.92),
+    rgba(12, 24, 20, 0.86)
   );
   box-shadow:
     0 18px 45px -20px rgba(0, 0, 0, 0.45),
