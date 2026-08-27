@@ -1313,20 +1313,24 @@ nav a.active {
 }
 @media (min-width: 901px) and (max-width: 1500px) {
   .pagehero > div:first-child {
-    max-width: 78%;
+    width: 88%;
+    max-width: 88%;
+    min-width: 0;
   }
   .pagehero h1 {
-    font-size: clamp(52px, 5.1vw, 76px);
+    font-size: clamp(44px, 4.3vw, 64px);
   }
 }
 @media (max-width: 1100px) {
   .pagehero > div:first-child {
-    max-width: 76%;
+    max-width: 88%;
   }
 }
 @media (max-width: 900px) {
   .pagehero > div:first-child {
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
     padding: 28px 30px 32px;
   }
 }
@@ -3717,6 +3721,10 @@ footer {
   .hero h1,
   .pagehero h1 {
     font-size: 42px;
+  }
+  .pagehero h1 {
+    font-size: clamp(28px, 8vw, 42px);
+    letter-spacing: -0.045em;
   }
   .hero p {
     font-size: 16px;
