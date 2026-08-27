@@ -833,6 +833,21 @@ export function Products() {
   );
 }
 export function Contacts() {
+  useEffect(() => {
+    if (sessionStorage.getItem("scroll-to-contact-form") !== "true") {
+      return undefined;
+    }
+
+    const scrollTimer = window.setTimeout(() => {
+      document
+        .querySelector("#contact-form")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      sessionStorage.removeItem("scroll-to-contact-form");
+    }, 100);
+
+    return () => window.clearTimeout(scrollTimer);
+  }, []);
+
   return (
     <Layout>
       <PageHero
@@ -878,6 +893,7 @@ export function Contacts() {
           </div>
         </div>
         <form
+          id="contact-form"
           onSubmit={(e) => {
             e.preventDefault();
             alert(

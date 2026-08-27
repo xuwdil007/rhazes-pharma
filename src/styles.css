@@ -2463,6 +2463,7 @@ nav a.active {
   margin-bottom: 4px;
 }
 .contact form {
+  scroll-margin-top: 110px;
   border-radius: var(--r-xl);
   padding: 48px;
   display: grid;

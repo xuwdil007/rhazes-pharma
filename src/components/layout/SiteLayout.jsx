@@ -82,6 +82,20 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const openContactForm = () => {
+    sessionStorage.setItem("scroll-to-contact-form", "true");
+    setOpen(false);
+
+    if ((location.hash.slice(1) || "/") === "/contacts") {
+      requestAnimationFrame(() => {
+        document
+          .querySelector("#contact-form")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        sessionStorage.removeItem("scroll-to-contact-form");
+      });
+    }
+  };
+
   return (
     <header className={scrolled ? "site-header-scrolled" : ""}>
       <svg className="header-glass-filters" aria-hidden="true">
@@ -135,11 +149,11 @@ export function Header() {
               {name}
             </a>
           ))}
-          <a className="mobile-cta" href="#/contacts">
+          <a className="mobile-cta" href="#/contacts" onClick={openContactForm}>
             Связаться с нами
           </a>
         </nav>
-        <a className="header-cta" href="#/contacts">
+        <a className="header-cta" href="#/contacts" onClick={openContactForm}>
           Связаться <ArrowUpRight size={17} />
         </a>
         <button className="menu" onClick={() => setOpen(!open)}>
