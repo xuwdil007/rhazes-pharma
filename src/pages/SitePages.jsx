@@ -834,16 +834,24 @@ export function Products() {
 }
 export function Contacts() {
   useEffect(() => {
-    if (sessionStorage.getItem("scroll-to-contact-form") !== "true") {
+    const requestedByUrl = window.location.hash.includes("?form=1");
+    if (
+      !requestedByUrl &&
+      sessionStorage.getItem("scroll-to-contact-form") !== "true"
+    ) {
       return undefined;
     }
 
     const scrollTimer = window.setTimeout(() => {
-      document
-        .querySelector("#contact-form")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const form = document.querySelector("#contact-form");
+      if (form) {
+        window.scrollTo({
+          top: form.getBoundingClientRect().top + window.scrollY - 100,
+          behavior: "smooth",
+        });
+      }
       sessionStorage.removeItem("scroll-to-contact-form");
-    }, 100);
+    }, 350);
 
     return () => window.clearTimeout(scrollTimer);
   }, []);

@@ -12,7 +12,7 @@ import {
 } from "../pages/SitePages.jsx";
 
 function App() {
-  const getRoute = () => window.location.hash.slice(1) || "/";
+  const getRoute = () => (window.location.hash.slice(1) || "/").split("?")[0];
   const [route, setRoute] = useState(getRoute);
 
   useEffect(() => {

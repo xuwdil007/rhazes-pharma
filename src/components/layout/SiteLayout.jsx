@@ -73,7 +73,7 @@ export function Logo({ light = false }) {
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(() => window.scrollY > 20);
-  const path = location.hash.slice(1) || "/";
+  const path = (location.hash.slice(1) || "/").split("?")[0];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -86,11 +86,15 @@ export function Header() {
     sessionStorage.setItem("scroll-to-contact-form", "true");
     setOpen(false);
 
-    if ((location.hash.slice(1) || "/") === "/contacts") {
+    if (path === "/contacts") {
       requestAnimationFrame(() => {
-        document
-          .querySelector("#contact-form")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const form = document.querySelector("#contact-form");
+        if (form) {
+          window.scrollTo({
+            top: form.getBoundingClientRect().top + window.scrollY - 100,
+            behavior: "smooth",
+          });
+        }
         sessionStorage.removeItem("scroll-to-contact-form");
       });
     }
@@ -149,11 +153,19 @@ export function Header() {
               {name}
             </a>
           ))}
-          <a className="mobile-cta" href="#/contacts" onClick={openContactForm}>
+          <a
+            className="mobile-cta"
+            href="#/contacts?form=1"
+            onClick={openContactForm}
+          >
             Связаться с нами
           </a>
         </nav>
-        <a className="header-cta" href="#/contacts" onClick={openContactForm}>
+        <a
+          className="header-cta"
+          href="#/contacts?form=1"
+          onClick={openContactForm}
+        >
           Связаться <ArrowUpRight size={17} />
         </a>
         <button className="menu" onClick={() => setOpen(!open)}>
