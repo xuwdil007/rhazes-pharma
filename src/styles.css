@@ -1930,6 +1930,17 @@ nav a.active {
   margin-top: 20px;
   width: auto;
 }
+.product-note-copy .hvac-details-btn {
+  border-color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 20px 38px -18px rgba(5, 27, 19, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -9px 20px rgba(10, 50, 37, 0.1);
+}
+.product-note-copy .hvac-details-btn:before {
+  transform: translateX(14%) rotate(3deg);
+}
 .product-impact {
   display: grid;
   grid-template-columns: 1fr 1fr;

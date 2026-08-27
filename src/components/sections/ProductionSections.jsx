@@ -73,7 +73,11 @@ export function HvacSection() {
             фармацевтического предприятия. Стабильная работа HVAC необходима для
             обеспечения требуемых условий производства и лабораторного контроля.
           </p>
-          <button className="btn" type="button" onClick={() => setOpen(true)}>
+          <button
+            className="btn hvac-details-btn"
+            type="button"
+            onClick={() => setOpen(true)}
+          >
             Подробнее о HVAC <ArrowRight size={18} />
           </button>
         </div>
