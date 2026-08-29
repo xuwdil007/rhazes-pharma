@@ -25,7 +25,6 @@ import {
   Capability,
   Eyebrow,
   PageHero,
-  Stats,
   Value,
 } from "../components/ui/SiteUi.jsx";
 import {
@@ -81,7 +80,6 @@ export function Home() {
           <Btn to="/about">История компании</Btn>
         </div>
       </section>
-      <Stats />
       <section className="directions section">
         <div className="section-head">
           <div>
@@ -241,7 +239,6 @@ export function About() {
           </ul>
         </div>
       </section>
-      <Stats />
       <section className="timeline section">
         <Eyebrow>Путь развития</Eyebrow>
         <div className="timeline-line">
