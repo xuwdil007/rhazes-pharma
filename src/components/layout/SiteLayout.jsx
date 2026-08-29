@@ -1,58 +1,6 @@
-import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, Send, X } from "lucide-react";
 import { navigation as nav } from "../../data/siteContent.js";
-
-const FluidGlassHeader = lazy(() => import("../ui/FluidGlassHeader.jsx"));
-
-function HeaderRefractionLayer({ active }) {
-  const layerRef = useRef(null);
-
-  useEffect(() => {
-    const layer = layerRef.current;
-    if (!active || !layer) return undefined;
-    const source = document.querySelector("main");
-    if (!source) return undefined;
-
-    const clone = source.cloneNode(true);
-    clone.removeAttribute("id");
-    clone.classList.add("header-refraction-clone");
-    clone.setAttribute("aria-hidden", "true");
-    clone.setAttribute("inert", "");
-    clone
-      .querySelectorAll("[id]")
-      .forEach((element) => element.removeAttribute("id"));
-    layer.replaceChildren(clone);
-
-    const syncClone = () => {
-      const bounds = source.getBoundingClientRect();
-      clone.style.width = `${bounds.width}px`;
-      clone.style.transform = `translate3d(${bounds.left}px, ${bounds.top}px, 0)`;
-      [...source.children].forEach((element, index) => {
-        const clonedElement = clone.children[index];
-        if (!clonedElement) return;
-        clonedElement.className = element.className;
-        clonedElement.style.cssText = element.style.cssText;
-      });
-    };
-
-    syncClone();
-    window.addEventListener("scroll", syncClone, { passive: true });
-    window.addEventListener("resize", syncClone);
-    return () => {
-      window.removeEventListener("scroll", syncClone);
-      window.removeEventListener("resize", syncClone);
-      layer.replaceChildren();
-    };
-  }, [active]);
-
-  return (
-    <div
-      ref={layerRef}
-      className="header-refraction-layer"
-      aria-hidden="true"
-    />
-  );
-}
 
 export function Logo({ light = false }) {
   return (
@@ -102,45 +50,7 @@ export function Header() {
 
   return (
     <header className={scrolled ? "site-header-scrolled" : ""}>
-      <svg className="header-glass-filters" aria-hidden="true">
-        <defs>
-          <filter
-            id="header-glass-refraction"
-            x="-15%"
-            y="-45%"
-            width="130%"
-            height="190%"
-            colorInterpolationFilters="sRGB"
-          >
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.008 0.045"
-              numOctaves="2"
-              seed="12"
-              result="glassNoise"
-            />
-            <feGaussianBlur
-              in="glassNoise"
-              stdDeviation="0.7"
-              result="softNoise"
-            />
-            <feDisplacementMap
-              in="SourceGraphic"
-              in2="softNoise"
-              scale="28"
-              xChannelSelector="R"
-              yChannelSelector="B"
-            />
-          </filter>
-        </defs>
-      </svg>
       <div className="navwrap">
-        <HeaderRefractionLayer active={scrolled} />
-        {scrolled && (
-          <Suspense fallback={<div className="header-fluid-glass-fallback" />}>
-            <FluidGlassHeader active />
-          </Suspense>
-        )}
         <Logo />
         <nav className={open ? "open" : ""}>
           {nav.map(([name, route]) => (
