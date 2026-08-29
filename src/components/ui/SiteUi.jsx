@@ -105,37 +105,6 @@ export function AnimatedNumber({ value, duration = 1400 }) {
   );
 }
 
-export function Stats() {
-  return (
-    <div className="stats">
-      <div>
-        <strong>
-          <AnimatedNumber value="2" />
-        </strong>
-        <span>га территории</span>
-      </div>
-      <div>
-        <strong>
-          <AnimatedNumber value="100" />
-        </strong>
-        <span>млн сомони инвестиций</span>
-      </div>
-      <div>
-        <strong>
-          <AnimatedNumber value="150" />
-        </strong>
-        <span>рабочих мест на I этапе</span>
-      </div>
-      <div>
-        <strong>
-          <AnimatedNumber value="2022" />
-        </strong>
-        <span>год начала проекта</span>
-      </div>
-    </div>
-  );
-}
-
 export function Capability({ n, title, value, image }) {
   return (
     <a href="#/production" className="cap-card">
