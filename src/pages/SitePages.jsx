@@ -27,10 +27,8 @@ import {
   PageHero,
   Value,
 } from "../components/ui/SiteUi.jsx";
-import {
-  HvacSection,
-  TabletProductionSection,
-} from "../components/sections/ProductionSections.jsx";
+import { TabletProductionSection } from "../components/sections/ProductionSections.jsx";
+import { EngineeringInfrastructureSection } from "../components/sections/EngineeringInfrastructureSection.jsx";
 
 export function Home() {
   return (
@@ -339,46 +337,7 @@ export function Production() {
           />
         </div>
       </section>
-      <section className="engineering">
-        <div className="eng-photo">
-          <img
-            src={`${import.meta.env.BASE_URL}assets/engineering-infrastructure.png`}
-            alt="Инженерные системы фармацевтического производства"
-          />
-        </div>
-        <div>
-          <Eyebrow>Инженерная инфраструктура</Eyebrow>
-          <h2>
-            Среда под <em>полным контролем</em>
-          </h2>
-          <p>
-            В «РАЗЕС ФАРМА» все инженерные системы объединены в единую
-            архитектуру качества и включают:
-          </p>
-          <ul>
-            <li>
-              <Droplets /> Систему водоподготовки и получения очищенной воды
-            </li>
-            <li>
-              <Factory /> Автоматизированную систему пароснабжения
-            </li>
-            <li>
-              <Wind /> Современную систему вентиляции, кондиционирования и
-              подготовки воздуха (HVAC)
-            </li>
-            <li>
-              <Microscope /> Систему непрерывного мониторинга температуры и
-              влажности
-            </li>
-            <li>
-              <ShieldCheck /> Систему основного и резервного электроснабжения
-            </li>
-            <li>
-              <Leaf /> Система очистки производственных отходов
-            </li>
-          </ul>
-        </div>
-      </section>
+      <EngineeringInfrastructureSection />
       <section className="digital section">
         <Eyebrow>Цифровая трансформация</Eyebrow>
         <h2>
@@ -707,7 +666,6 @@ export function Quality() {
           ))}
         </div>
       </section>
-      <HvacSection />
       <section className="qualification section">
         <div className="section-head">
           <div>
