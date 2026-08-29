@@ -110,7 +110,7 @@ export function Footer() {
           <a href="#/production">Производство</a>
           <a href="#/quality">Система качества</a>
           <a href="#/products">Продукция</a>
-          <a href="#/about">Карьера</a>
+          <a href="#/career">Карьера</a>
         </div>
         <div>
           <b>Контакты</b>

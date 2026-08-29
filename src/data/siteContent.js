@@ -4,6 +4,7 @@ export const navigation = [
   ["Производство", "/production"],
   ["Качество", "/quality"],
   ["Продукция", "/products"],
+  ["Карьера", "/career"],
   ["Контакты", "/contacts"],
 ];
 

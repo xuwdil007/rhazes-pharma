@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
   ArrowRight,
+  Briefcase,
   Check,
   Cpu,
   Droplets,
   Factory,
   FlaskConical,
+  GraduationCap,
   HeartPulse,
   Leaf,
   Mail,
@@ -15,6 +17,7 @@ import {
   Phone,
   Send,
   ShieldCheck,
+  Users,
   Wind,
   X,
 } from "lucide-react";
@@ -787,6 +790,247 @@ export function Products() {
     </Layout>
   );
 }
+export function Career() {
+  return (
+    <Layout>
+      <PageHero
+        eyebrow="Карьера"
+        n="06"
+        title={
+          <>
+            Создавайте будущее
+            <br />
+            <em>фармацевтики вместе с нами</em>
+          </>
+        }
+        text="РАЗЕС ФАРМА формирует команду специалистов, готовых развивать современное производство лекарственных препаратов в Таджикистане."
+        note="Мы ценим ответственность, профессиональный рост, внимание к качеству и готовность работать в единой производственной системе."
+      />
+
+      <section className="career-overview section split">
+        <div>
+          <Eyebrow>Работа в РАЗЕС ФАРМА</Eyebrow>
+          <h2>
+            Команда для проекта
+            <br />
+            <em>нового поколения</em>
+          </h2>
+        </div>
+        <div>
+          <p className="lead">
+            Современное фармацевтическое предприятие объединяет производство,
+            лабораторный контроль, инженерную инфраструктуру, обеспечение
+            качества и цифровое управление. Для устойчивой работы комплекса
+            необходимы специалисты разных профессиональных направлений.
+          </p>
+          <p>
+            Мы стремимся создавать рабочую среду, в которой сотрудники понимают
+            свою роль в общей системе качества, развивают профессиональные
+            компетенции и участвуют в совершенствовании процессов предприятия.
+          </p>
+        </div>
+      </section>
+
+      <section className="career-values section">
+        <div className="section-head">
+          <div>
+            <Eyebrow>Наш подход</Eyebrow>
+            <h2>
+              Профессиональная среда для
+              <br />
+              <em>роста и ответственности</em>
+            </h2>
+          </div>
+          <p>
+            Общие принципы работы команды строятся вокруг качества,
+            сотрудничества и постоянного развития компетенций.
+          </p>
+        </div>
+        <div className="value-grid career-value-grid">
+          <Value
+            icon={<GraduationCap />}
+            t="Развитие компетенций"
+            d="Изучение процессов, требований GMP и современных производственных подходов."
+          />
+          <Value
+            icon={<ShieldCheck />}
+            t="Культура качества"
+            d="Внимание к документации, установленным процедурам и результату каждой операции."
+          />
+          <Value
+            icon={<Users />}
+            t="Командная работа"
+            d="Взаимодействие производственных, лабораторных, инженерных и административных подразделений."
+          />
+          <Value
+            icon={<Cpu />}
+            t="Современные технологии"
+            d="Работа с автоматизированным оборудованием и цифровыми инструментами управления."
+          />
+        </div>
+      </section>
+
+      <section className="career-directions section">
+        <div className="section-head">
+          <div>
+            <Eyebrow>Профессиональные направления</Eyebrow>
+            <h2>
+              Где можно применить
+              <br />
+              <em>свои знания</em>
+            </h2>
+          </div>
+          <p>
+            Перечень направлений является информационным. Актуальные позиции и
+            требования к кандидатам уточняются при обращении.
+          </p>
+        </div>
+        <div className="career-direction-grid">
+          <article>
+            <Factory />
+            <small>01</small>
+            <h3>Производство</h3>
+            <p>
+              Специалисты производственных участков, технологи, операторы линий
+              и сотрудники подготовки сырья и упаковки продукции.
+            </p>
+          </article>
+          <article>
+            <Microscope />
+            <small>02</small>
+            <h3>Лаборатории и контроль качества</h3>
+            <p>
+              Химики, аналитики, микробиологи и специалисты по входному,
+              промежуточному и финальному контролю продукции.
+            </p>
+          </article>
+          <article>
+            <ShieldCheck />
+            <small>03</small>
+            <h3>Обеспечение качества</h3>
+            <p>
+              Работа с документацией, отклонениями, рисками, квалификацией,
+              валидацией и соблюдением принципов GMP.
+            </p>
+          </article>
+          <article>
+            <Cpu />
+            <small>04</small>
+            <h3>Инженерия и автоматизация</h3>
+            <p>
+              Эксплуатация инженерных систем, обслуживание оборудования,
+              автоматизация и контроль производственных параметров.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section className="career-process section">
+        <Eyebrow>Как проходит знакомство</Eyebrow>
+        <h2>
+          Понятный путь
+          <br />
+          <em>от отклика до решения</em>
+        </h2>
+        <div className="career-process-grid">
+          {[
+            [
+              "01",
+              "Отклик",
+              "Отправьте информацию о себе и выбранном направлении.",
+            ],
+            [
+              "02",
+              "Рассмотрение",
+              "Команда изучит опыт, образование и профессиональные интересы.",
+            ],
+            [
+              "03",
+              "Знакомство",
+              "При взаимном интересе проводится беседа с представителями компании.",
+            ],
+            [
+              "04",
+              "Обратная связь",
+              "После обсуждения кандидат получает информацию о дальнейших шагах.",
+            ],
+          ].map(([number, title, description]) => (
+            <article key={number}>
+              <span>{number}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="career-apply section">
+        <div>
+          <Eyebrow>Присоединиться к команде</Eyebrow>
+          <h2>
+            Расскажите о своём
+            <br />
+            <em>профессиональном опыте</em>
+          </h2>
+          <p>
+            Заполните форму, укажите интересующее направление и кратко опишите
+            свой опыт. Это временная форма для предварительного знакомства.
+          </p>
+          <div className="career-apply-note">
+            <Briefcase />
+            <span>
+              Отправка формы пока работает в демонстрационном режиме. Контактные
+              данные и порядок приёма резюме можно изменить через админку.
+            </span>
+          </div>
+        </div>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            alert("Спасибо! Информация о вашем отклике подготовлена.");
+          }}
+        >
+          <label>
+            Имя и фамилия
+            <input required placeholder="Как к вам обращаться?" />
+          </label>
+          <label>
+            Электронная почта
+            <input required type="email" placeholder="name@example.com" />
+          </label>
+          <label>
+            Телефон
+            <input required type="tel" placeholder="+992" />
+          </label>
+          <label>
+            Направление
+            <select defaultValue="">
+              <option value="" disabled>
+                Выберите направление
+              </option>
+              <option>Производство</option>
+              <option>Лаборатории и контроль качества</option>
+              <option>Обеспечение качества</option>
+              <option>Инженерия и автоматизация</option>
+              <option>Другое направление</option>
+            </select>
+          </label>
+          <label className="career-message-field">
+            Кратко о себе
+            <textarea
+              required
+              placeholder="Опыт, образование и интересующее направление"
+            />
+          </label>
+          <button className="btn" type="submit">
+            Отправить отклик <ArrowRight />
+          </button>
+        </form>
+      </section>
+    </Layout>
+  );
+}
+
 export function Contacts() {
   useEffect(() => {
     const requestedByUrl = window.location.hash.includes("?form=1");
@@ -815,7 +1059,7 @@ export function Contacts() {
     <Layout>
       <PageHero
         eyebrow="Контакты"
-        n="06"
+        n="07"
         title={
           <>
             Давайте создавать
@@ -907,5 +1151,6 @@ const cmsPages = [
   ["Производство", "/production"],
   ["Качество", "/quality"],
   ["Продукция", "/products"],
+  ["Карьера", "/career"],
   ["Контакты", "/contacts"],
 ];

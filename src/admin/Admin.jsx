@@ -18,6 +18,7 @@ import { Logo } from "../components/layout/SiteLayout.jsx";
 import staticContent from "../../backend/data/content.json";
 import {
   About,
+  Career,
   Contacts,
   Home,
   Products,
@@ -395,6 +396,7 @@ function buildCmsCatalog() {
     ["production", "Производство", "/production", <Production />],
     ["quality", "Качество", "/quality", <Quality />],
     ["products", "Продукция", "/products", <Products />],
+    ["career", "Карьера", "/career", <Career />],
     ["contacts", "Контакты", "/contacts", <Contacts />],
   ];
   const groups = [];

@@ -4,6 +4,7 @@ import "../styles.css";
 import { Admin, CmsRuntime } from "../admin/Admin.jsx";
 import {
   About,
+  Career,
   Contacts,
   Home,
   Products,
@@ -35,6 +36,8 @@ function App() {
       <Quality />
     ) : route === "/products" ? (
       <Products />
+    ) : route === "/career" ? (
+      <Career />
     ) : route === "/contacts" ? (
       <Contacts />
     ) : (
