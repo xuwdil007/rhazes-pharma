@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ArrowRight,
-  Briefcase,
   Check,
   Cpu,
   Droplets,
@@ -976,13 +975,6 @@ export function Career() {
             Заполните форму, укажите интересующее направление и кратко опишите
             свой опыт. Это временная форма для предварительного знакомства.
           </p>
-          <div className="career-apply-note">
-            <Briefcase />
-            <span>
-              Отправка формы пока работает в демонстрационном режиме. Контактные
-              данные и порядок приёма резюме можно изменить через админку.
-            </span>
-          </div>
         </div>
         <form
           onSubmit={(event) => {
