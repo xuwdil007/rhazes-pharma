@@ -25,6 +25,7 @@ import { Layout } from "../components/layout/SiteLayout.jsx";
 import {
   Btn,
   Capability,
+  ContentSection,
   Eyebrow,
   PageHero,
   Value,
@@ -35,7 +36,7 @@ import { EngineeringInfrastructureSection } from "../components/sections/Enginee
 export function Home() {
   return (
     <Layout>
-      <section className="hero">
+      <ContentSection className="hero">
         <img src={`${import.meta.env.BASE_URL}assets/pharma-hero.png`} />
         <div className="hero-shade" />
         <div className="hero-content">
@@ -63,8 +64,8 @@ export function Home() {
             принципам
           </p>
         </div>
-      </section>
-      <section className="intro section">
+      </ContentSection>
+      <ContentSection className="intro section">
         <div>
           <Eyebrow>О проекте</Eyebrow>
           <h2>
@@ -79,8 +80,8 @@ export function Home() {
           </p>
           <Btn to="/about">История компании</Btn>
         </div>
-      </section>
-      <section className="directions section">
+      </ContentSection>
+      <ContentSection className="directions section">
         <div className="section-head">
           <div>
             <Eyebrow>Производственные возможности</Eyebrow>
@@ -121,8 +122,8 @@ export function Home() {
             image={`${import.meta.env.BASE_URL}assets/form-topical.png`}
           />
         </div>
-      </section>
-      <section className="quality-call">
+      </ContentSection>
+      <ContentSection className="quality-call">
         <div>
           <Eyebrow>Философия качества</Eyebrow>
           <h2>
@@ -143,8 +144,8 @@ export function Home() {
             производство
           </small>
         </div>
-      </section>
-      <section className="values section">
+      </ContentSection>
+      <ContentSection className="values section">
         <div className="section-head">
           <div>
             <Eyebrow>Наши принципы</Eyebrow>
@@ -175,7 +176,7 @@ export function Home() {
             d="Платформа для расширения и освоения новых направлений."
           />
         </div>
-      </section>
+      </ContentSection>
     </Layout>
   );
 }
@@ -194,7 +195,7 @@ export function About() {
         text="Долгосрочный промышленный проект, направленный на развитие отечественного производства и технологического потенциала страны."
         note="РАЗЕС ФАРМА представляет собой комплексный фармацевтический проект, направленный на создание современной производственной базы по выпуску лекарственных препаратов различных лекарственных форм."
       />
-      <section className="story section split">
+      <ContentSection className="story section split">
         <div>
           <Eyebrow>Наша история</Eyebrow>
           <h2>
@@ -238,8 +239,8 @@ export function About() {
             </li>
           </ul>
         </div>
-      </section>
-      <section className="timeline section">
+      </ContentSection>
+      <ContentSection className="timeline section">
         <Eyebrow>Путь развития</Eyebrow>
         <div className="timeline-line">
           <div>
@@ -267,8 +268,8 @@ export function About() {
             <p>Новые лекарственные формы и выход на зарубежные рынки.</p>
           </div>
         </div>
-      </section>
-      <section className="national">
+      </ContentSection>
+      <ContentSection className="national">
         <div>
           <Eyebrow>Значение для страны</Eyebrow>
           <h2>
@@ -283,7 +284,7 @@ export function About() {
           </p>
           <Btn to="/contacts">Стать частью команды</Btn>
         </div>
-      </section>
+      </ContentSection>
     </Layout>
   );
 }
@@ -303,7 +304,7 @@ export function Production() {
         text="Современные участки, автоматизированные системы и продуманная организация потоков обеспечивают стабильность всех производственных процессов."
         note="Основная идея проекта заключается в создании предприятия нового поколения, где производственные процессы, инженерные системы и система качества объединены в единую управляемую структуру."
       />
-      <section className="section">
+      <ContentSection className="section">
         <div className="section-head">
           <div>
             <Eyebrow>Производственный цикл</Eyebrow>
@@ -338,9 +339,9 @@ export function Production() {
             d="Первичная и вторичная упаковка с полной прослеживаемостью."
           />
         </div>
-      </section>
+      </ContentSection>
       <EngineeringInfrastructureSection />
-      <section className="digital section">
+      <ContentSection className="digital section">
         <Eyebrow>Цифровая трансформация</Eyebrow>
         <h2>
           SAP объединяет ключевые процессы
@@ -361,7 +362,7 @@ export function Production() {
             </div>
           ))}
         </div>
-      </section>
+      </ContentSection>
     </Layout>
   );
 }
@@ -400,7 +401,7 @@ export function Quality() {
         text="Система охватывает производственные процессы, документацию, контроль рисков, подготовку персонала и эксплуатацию оборудования."
         note="Качество — формирование системы, в которой качество является ответственностью каждого подразделения."
       />
-      <section className="section qa">
+      <ContentSection className="section qa">
         <div>
           <Eyebrow>QA + QC</Eyebrow>
           <h2>
@@ -457,7 +458,7 @@ export function Quality() {
             </div>
           </article>
         </div>
-      </section>
+      </ContentSection>
       <div
         className="hvac-modal-backdrop quality-modal-backdrop"
         role="presentation"
@@ -487,7 +488,7 @@ export function Quality() {
             Отдел обеспечения <em>качества (QA)</em>
           </h2>
           <div className="hvac-modal-grid qa-modal-grid">
-            <section className="modal-wide">
+            <ContentSection className="modal-wide">
               <small>Роль QA</small>
               <h3>Общая система качества предприятия</h3>
               <p>
@@ -500,8 +501,8 @@ export function Quality() {
                 контроль не только конечного результата, но и всей системы
                 производства.
               </p>
-            </section>
-            <section>
+            </ContentSection>
+            <ContentSection>
               <small>10.1</small>
               <h3>Управление документацией</h3>
               <p>QA обеспечивает:</p>
@@ -512,8 +513,8 @@ export function Quality() {
                 <li>управление версиями;</li>
                 <li>архивирование записей.</li>
               </ul>
-            </section>
-            <section>
+            </ContentSection>
+            <ContentSection>
               <small>Документы</small>
               <h3>Основные документы</h3>
               <ul>
@@ -524,8 +525,8 @@ export function Quality() {
                 <li>журналы производства;</li>
                 <li>отчёты.</li>
               </ul>
-            </section>
-            <section className="modal-wide">
+            </ContentSection>
+            <ContentSection className="modal-wide">
               <small>10.1</small>
               <h3>Управление отклонениями</h3>
               <p>Любое отклонение от установленного процесса должно быть:</p>
@@ -535,7 +536,7 @@ export function Quality() {
                 <li>оценено;</li>
                 <li>документально оформлено.</li>
               </ul>
-            </section>
+            </ContentSection>
           </div>
         </article>
       </div>
@@ -568,7 +569,7 @@ export function Quality() {
             Отдел контроля <em>качества (ОКК/QC)</em>
           </h2>
           <div className="hvac-modal-grid qa-modal-grid">
-            <section className="modal-wide">
+            <ContentSection className="modal-wide">
               <small>Роль ОКК</small>
               <h3>Независимое подразделение контроля</h3>
               <p>
@@ -577,8 +578,8 @@ export function Quality() {
                 подтверждение качества продукции.
               </p>
               <p>Основные направления деятельности ОКК:</p>
-            </section>
-            <section>
+            </ContentSection>
+            <ContentSection>
               <small>01</small>
               <h3>Контроль поступающего сырья</h3>
               <p>
@@ -591,8 +592,8 @@ export function Quality() {
                 <li>физико-химические показатели;</li>
                 <li>соответствие установленным требованиям.</li>
               </ul>
-            </section>
-            <section>
+            </ContentSection>
+            <ContentSection>
               <small>02</small>
               <h3>Контроль в процессе производства</h3>
               <p>
@@ -605,8 +606,8 @@ export function Quality() {
                 <li>физико-химические параметры;</li>
                 <li>технологические показатели.</li>
               </ul>
-            </section>
-            <section className="modal-wide">
+            </ContentSection>
+            <ContentSection className="modal-wide">
               <small>03</small>
               <h3>Контроль готовой продукции</h3>
               <p>
@@ -619,11 +620,11 @@ export function Quality() {
                 <li>количественное содержание действующих веществ;</li>
                 <li>соответствие нормативным требованиям.</li>
               </ul>
-            </section>
+            </ContentSection>
           </div>
         </article>
       </div>
-      <section className="quality-scope section">
+      <ContentSection className="quality-scope section">
         <div className="section-head">
           <div>
             <Eyebrow>Область контроля</Eyebrow>
@@ -668,8 +669,8 @@ export function Quality() {
             </article>
           ))}
         </div>
-      </section>
-      <section className="qualification section">
+      </ContentSection>
+      <ContentSection className="qualification section">
         <div className="section-head">
           <div>
             <Eyebrow>Квалификация и валидация</Eyebrow>
@@ -718,8 +719,8 @@ export function Quality() {
             </p>
           </article>
         </div>
-      </section>
-      <section className="section principles">
+      </ContentSection>
+      <ContentSection className="section principles">
         <Eyebrow>Принципы системы</Eyebrow>
         <div className="check-grid">
           {[
@@ -736,7 +737,7 @@ export function Quality() {
             </div>
           ))}
         </div>
-      </section>
+      </ContentSection>
     </Layout>
   );
 }
@@ -756,7 +757,7 @@ export function Products() {
         text="Производственная платформа ориентирована на актуальные потребности современной медицины и системы здравоохранения."
         note="Ассортимент формируется с учётом актуальных потребностей системы здравоохранения и современных терапевтических направлений."
       />
-      <section className="section products-catalog">
+      <ContentSection className="section products-catalog">
         <div className="section-head">
           <div>
             <Eyebrow>Терапевтические направления</Eyebrow>
@@ -784,7 +785,7 @@ export function Products() {
             </article>
           ))}
         </div>
-      </section>
+      </ContentSection>
       <TabletProductionSection />
     </Layout>
   );
@@ -806,7 +807,7 @@ export function Career() {
         note="Мы ценим ответственность, профессиональный рост, внимание к качеству и готовность работать в единой производственной системе."
       />
 
-      <section className="career-overview section split">
+      <ContentSection className="career-overview section split">
         <div>
           <Eyebrow>Работа в РАЗЕС ФАРМА</Eyebrow>
           <h2>
@@ -828,9 +829,9 @@ export function Career() {
             компетенции и участвуют в совершенствовании процессов предприятия.
           </p>
         </div>
-      </section>
+      </ContentSection>
 
-      <section className="career-values section">
+      <ContentSection className="career-values section">
         <div className="section-head">
           <div>
             <Eyebrow>Наш подход</Eyebrow>
@@ -867,9 +868,9 @@ export function Career() {
             d="Работа с автоматизированным оборудованием и цифровыми инструментами управления."
           />
         </div>
-      </section>
+      </ContentSection>
 
-      <section className="career-process section">
+      <ContentSection className="career-process section">
         <Eyebrow>Как проходит знакомство</Eyebrow>
         <h2>
           Понятный путь
@@ -906,9 +907,9 @@ export function Career() {
             </article>
           ))}
         </div>
-      </section>
+      </ContentSection>
 
-      <section className="career-apply section">
+      <ContentSection className="career-apply section">
         <div>
           <Eyebrow>Присоединиться к команде</Eyebrow>
           <h2>
@@ -963,7 +964,7 @@ export function Career() {
             Отправить отклик <ArrowRight />
           </button>
         </form>
-      </section>
+      </ContentSection>
     </Layout>
   );
 }
@@ -1007,7 +1008,7 @@ export function Contacts() {
         text="Открыты для профессионального диалога, технологического сотрудничества и сильных специалистов."
         note="Открыты для профессионального диалога, технологического сотрудничества и взаимодействия со специалистами отрасли."
       />
-      <section className="contact section">
+      <ContentSection className="contact section">
         <div className="contact-info">
           <Eyebrow>Связаться с нами</Eyebrow>
           <h2>
@@ -1077,7 +1078,7 @@ export function Contacts() {
             Нажимая кнопку, вы соглашаетесь с политикой обработки данных.
           </small>
         </form>
-      </section>
+      </ContentSection>
     </Layout>
   );
 }

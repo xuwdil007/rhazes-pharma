@@ -26,6 +26,17 @@ import {
   Quality,
 } from "../pages/SitePages.jsx";
 
+const isStaticSite = import.meta.env.VITE_STATIC_SITE === "true";
+const staticAdminLogin = "admin";
+const staticAdminPassword = "Rhazes2026!";
+
+function storeLocalContent(content) {
+  localStorage.setItem("rhazes-cms-content", JSON.stringify(content));
+  window.dispatchEvent(
+    new CustomEvent("rhazes-content-updated", { detail: content }),
+  );
+}
+
 function getCmsKey(node, root, region) {
   const parts = [];
   let element = node.parentElement;
@@ -314,8 +325,14 @@ export function CmsRuntime({ route }) {
       localStorage.getItem("rhazes-cms-content") || "{}",
     );
     content[editor.dataset.cmsKey] = draft;
-    localStorage.setItem("rhazes-cms-content", JSON.stringify(content));
+    storeLocalContent(content);
     if (editor.__cmsTextNode) editor.__cmsTextNode.nodeValue = draft;
+    if (isStaticSite) {
+      setNotice("Изменение сохранено в этом браузере");
+      setEditor(null);
+      setTimeout(() => setNotice(""), 3500);
+      return;
+    }
     const token = sessionStorage.getItem("rhazes-admin-token");
     try {
       const response = await fetch("/api/content", {
@@ -638,6 +655,18 @@ export function Admin() {
     event.preventDefault();
     setError("");
     try {
+      if (isStaticSite) {
+        if (login !== staticAdminLogin || password !== staticAdminPassword) {
+          throw new Error("Неверный логин или пароль");
+        }
+        const staticToken = "static-admin-session";
+        sessionStorage.setItem("rhazes-admin-token", staticToken);
+        setToken(staticToken);
+        setContent(
+          JSON.parse(localStorage.getItem("rhazes-cms-content") || "{}"),
+        );
+        return;
+      }
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -660,6 +689,12 @@ export function Admin() {
   async function resetContent() {
     if (!confirm("Удалить все изменения и вернуть исходные тексты сайта?"))
       return;
+    if (isStaticSite) {
+      storeLocalContent({});
+      setContent({});
+      setDrafts({});
+      return;
+    }
     const response = await fetch("/api/content", {
       method: "PUT",
       headers: {
@@ -675,6 +710,11 @@ export function Admin() {
   }
 
   async function persist(nextContent) {
+    if (isStaticSite) {
+      storeLocalContent(nextContent);
+      setContent(nextContent);
+      return;
+    }
     const response = await fetch("/api/content", {
       method: "PUT",
       headers: {

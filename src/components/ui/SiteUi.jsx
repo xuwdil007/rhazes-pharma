@@ -20,6 +20,11 @@ export function Eyebrow({ children }) {
   );
 }
 
+/** Semantic wrapper used by every independent content block on a page. */
+export function ContentSection({ children, ...props }) {
+  return <section {...props}>{children}</section>;
+}
+
 export function ModalGlassRefraction({ active = true }) {
   const layerRef = useRef(null);
 
