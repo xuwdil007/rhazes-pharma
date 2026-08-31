@@ -2580,46 +2580,6 @@ nav a.active {
 .career-value-grid .value {
   min-height: 300px;
 }
-.career-direction-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 54px;
-}
-.career-direction-grid article {
-  position: relative;
-  min-height: 330px;
-  padding: 34px;
-  border: var(--glass-card-border);
-  border-radius: var(--r-lg);
-  background: var(--glass-card);
-  box-shadow: var(--glass-shadow-sm), var(--glass-hl);
-}
-.career-direction-grid article > svg {
-  width: 42px;
-  height: 42px;
-  margin-bottom: 55px;
-  padding: 10px;
-  border-radius: var(--r-sm);
-  background: rgba(0, 153, 112, 0.1);
-  color: var(--green);
-}
-.career-direction-grid small {
-  position: absolute;
-  top: 38px;
-  right: 34px;
-  color: var(--orange);
-  font-weight: 700;
-}
-.career-direction-grid h3 {
-  min-height: 52px;
-  margin-bottom: 14px;
-  font-size: 20px;
-}
-.career-direction-grid p {
-  margin: 0;
-  font-size: 13px;
-}
 .career-process {
   margin: 0 5vw;
   padding: 90px 7vw;
@@ -2708,11 +2668,6 @@ nav a.active {
 .career-apply form .btn {
   width: max-content;
 }
-@media (max-width: 1100px) {
-  .career-direction-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 @media (max-width: 900px) {
   .career-process,
   .career-apply {
@@ -2733,7 +2688,6 @@ nav a.active {
   }
 }
 @media (max-width: 560px) {
-  .career-direction-grid,
   .career-process-grid,
   .career-apply form {
     grid-template-columns: 1fr;
