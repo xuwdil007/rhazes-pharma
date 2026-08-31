@@ -3484,6 +3484,53 @@ footer {
 .admin-block-fields textarea:focus {
   border-color: var(--green);
 }
+.admin-image-field {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+.admin-image-field > img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(12, 42, 33, 0.14);
+  background: #e8eeeb;
+}
+.admin-image-field > div {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+.admin-image-upload {
+  min-height: 54px;
+  padding: 0 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  width: max-content;
+  align-items: center;
+  gap: 9px;
+  color: white;
+  background: var(--green);
+  cursor: pointer;
+  font-weight: 700;
+}
+.admin-image-upload svg {
+  width: 18px;
+}
+.admin-image-upload input {
+  display: none;
+}
+.admin-image-url {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(12, 42, 33, 0.16);
+  border-radius: 12px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.72);
+}
 .admin-field-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -3974,6 +4021,9 @@ footer {
   }
 }
 @media (max-width: 560px) {
+  .admin-image-field {
+    grid-template-columns: 1fr;
+  }
   .hero h1,
   .pagehero h1 {
     font-size: 42px;

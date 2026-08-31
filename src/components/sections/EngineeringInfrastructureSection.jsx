@@ -215,6 +215,7 @@ export function EngineeringInfrastructureSection() {
       <section className="engineering">
         <div className="eng-photo">
           <img
+            data-cms-image="Фото раздела «Производство»"
             src={`${import.meta.env.BASE_URL}assets/engineering-infrastructure.png`}
             alt="Инженерные системы фармацевтического производства"
           />

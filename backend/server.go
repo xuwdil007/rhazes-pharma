@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-const maxBodySize = 2 << 20
+const maxBodySize = 16 << 20
 
 type server struct {
 	root, dataFile, login, password, secret string
@@ -136,8 +136,8 @@ func (s *server) contentHandler(w http.ResponseWriter, r *http.Request) {
 			if len(key) > 300 {
 				key = key[:300]
 			}
-			if len(value) > 10000 {
-				value = value[:10000]
+			if len(value) > 12<<20 {
+				value = value[:12<<20]
 			}
 			clean[key] = value
 		}

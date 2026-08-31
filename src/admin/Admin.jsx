@@ -5,6 +5,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Download,
+  Image as ImageIcon,
   LayoutDashboard,
   LogOut,
   Pencil,
@@ -85,12 +86,24 @@ function getEditableTextNodes(root) {
 }
 
 function getEditableAttributes(scope, root, region) {
-  return [...scope.querySelectorAll("[placeholder]")].map((element) => ({
-    key: getCmsAttributeKey(element, root, region, "placeholder"),
-    element,
-    attribute: "placeholder",
-    original: element.getAttribute("placeholder") || "",
-  }));
+  return [
+    ...[...scope.querySelectorAll("[placeholder]")].map((element) => ({
+      key: getCmsAttributeKey(element, root, region, "placeholder"),
+      element,
+      attribute: "placeholder",
+      type: "text",
+      label: "Подсказка поля",
+      original: element.getAttribute("placeholder") || "",
+    })),
+    ...[...scope.querySelectorAll("img[data-cms-image]")].map((element) => ({
+      key: getCmsAttributeKey(element, root, region, "src"),
+      element,
+      attribute: "src",
+      type: "image",
+      label: element.dataset.cmsImage || "Изображение",
+      original: element.getAttribute("src") || "",
+    })),
+  ];
 }
 
 function applyStoredContent(root, region, content) {
@@ -480,7 +493,12 @@ function buildCmsCatalog() {
                 },
               ],
               original: attribute.original,
-              preview: `Подсказка поля: ${attribute.original}`.slice(0, 90),
+              type: attribute.type,
+              label: attribute.label,
+              preview:
+                attribute.type === "image"
+                  ? attribute.label
+                  : `Подсказка поля: ${attribute.original}`.slice(0, 90),
             });
           });
           return {
@@ -777,6 +795,36 @@ export function Admin() {
     } catch (saveError) {
       setError(saveError.message);
     }
+  }
+
+  async function selectImageFile(entry, file) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Выберите файл изображения");
+      return;
+    }
+    setError("");
+    const source = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Не удалось прчитать файл"));
+      reader.readAsDataURL(file);
+    });
+    const image = await new Promise((resolve, reject) => {
+      const preview = new Image();
+      preview.onload = () => resolve(preview);
+      preview.onerror = () =>
+        reject(new Error("Не удалось открыть изображение"));
+      preview.src = source;
+    });
+    const maxSide = 1920;
+    const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(image.width * scale);
+    canvas.height = Math.round(image.height * scale);
+    canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+    const optimized = canvas.toDataURL("image/jpeg", 0.84);
+    setDrafts((current) => ({ ...current, [entry.key]: optimized }));
   }
 
   async function saveBlock(block) {
@@ -1125,16 +1173,45 @@ export function Admin() {
                   drafts[entry.key] ?? getEntryValue(entry, content);
                 return (
                   <label key={entry.key}>
-                    <span>Поле {index + 1}</span>
-                    <textarea
-                      value={value}
-                      onChange={(event) =>
-                        setDrafts((current) => ({
-                          ...current,
-                          [entry.key]: event.target.value,
-                        }))
-                      }
-                    />
+                    <span>{entry.label || `Поле ${index + 1}`}</span>
+                    {entry.type === "image" ? (
+                      <div className="admin-image-field">
+                        <img src={value} alt="Предпросмотр" />
+                        <div>
+                          <label className="admin-image-upload">
+                            <ImageIcon /> Выбрать фото
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(event) =>
+                                selectImageFile(entry, event.target.files?.[0])
+                              }
+                            />
+                          </label>
+                          <input
+                            className="admin-image-url"
+                            value={value}
+                            placeholder="Или вставьте URL изображения"
+                            onChange={(event) =>
+                              setDrafts((current) => ({
+                                ...current,
+                                [entry.key]: event.target.value,
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <textarea
+                        value={value}
+                        onChange={(event) =>
+                          setDrafts((current) => ({
+                            ...current,
+                            [entry.key]: event.target.value,
+                          }))
+                        }
+                      />
+                    )}
                     <div className="admin-field-buttons">
                       <button
                         className="admin-save-field"

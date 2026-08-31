@@ -37,7 +37,11 @@ export function Home() {
   return (
     <Layout>
       <ContentSection className="hero">
-        <img src={`${import.meta.env.BASE_URL}assets/pharma-hero.png`} />
+        <img
+          data-cms-image="Фото главного баннера"
+          src={`${import.meta.env.BASE_URL}assets/pharma-hero.png`}
+          alt="Фармацевтическое производство РАЗЕС ФАРМА"
+        />
         <div className="hero-shade" />
         <div className="hero-content">
           <Eyebrow>Фармацевтика нового поколения</Eyebrow>
