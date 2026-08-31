@@ -56,8 +56,10 @@ export function Header() {
           {nav.map(([name, route]) => (
             <a
               className={path === route ? "active" : ""}
-              href={"#" + route}
-              onClick={() => setOpen(false)}
+              href={route === "/contacts" ? "#/contacts?form=1" : "#" + route}
+              onClick={
+                route === "/contacts" ? openContactForm : () => setOpen(false)
+              }
               key={route}
             >
               {name}
@@ -100,7 +102,10 @@ export function Footer() {
         <div>
           <b>Навигация</b>
           {nav.slice(1).map(([name, route]) => (
-            <a href={"#" + route} key={route}>
+            <a
+              href={route === "/contacts" ? "#/contacts?form=1" : "#" + route}
+              key={route}
+            >
               {name}
             </a>
           ))}

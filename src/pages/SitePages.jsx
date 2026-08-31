@@ -979,18 +979,24 @@ export function Contacts() {
       return undefined;
     }
 
-    const scrollTimer = window.setTimeout(() => {
-      const form = document.querySelector("#contact-form");
-      if (form) {
-        window.scrollTo({
-          top: form.getBoundingClientRect().top + window.scrollY - 100,
-          behavior: "smooth",
-        });
-      }
-      sessionStorage.removeItem("scroll-to-contact-form");
-    }, 350);
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        const form = document.querySelector("#contact-form");
+        if (form) {
+          window.scrollTo({
+            top: form.getBoundingClientRect().top + window.scrollY - 100,
+            behavior: "auto",
+          });
+        }
+        sessionStorage.removeItem("scroll-to-contact-form");
+      });
+    });
 
-    return () => window.clearTimeout(scrollTimer);
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
   }, []);
 
   return (
