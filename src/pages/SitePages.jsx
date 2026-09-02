@@ -6,7 +6,6 @@ import {
   Droplets,
   Factory,
   FlaskConical,
-  GraduationCap,
   HeartPulse,
   Leaf,
   Mail,
@@ -16,7 +15,6 @@ import {
   Phone,
   Send,
   ShieldCheck,
-  Users,
   Wind,
   X,
 } from "lucide-react";
@@ -834,45 +832,6 @@ export function Career() {
             свою роль в общей системе качества, развивают профессиональные
             компетенции и участвуют в совершенствовании процессов предприятия.
           </p>
-        </div>
-      </ContentSection>
-
-      <ContentSection className="career-values section">
-        <div className="section-head">
-          <div>
-            <Eyebrow>Наш подход</Eyebrow>
-            <h2>
-              Профессиональная среда для
-              <br />
-              <em>роста и ответственности</em>
-            </h2>
-          </div>
-          <p>
-            Общие принципы работы команды строятся вокруг качества,
-            сотрудничества и постоянного развития компетенций.
-          </p>
-        </div>
-        <div className="value-grid career-value-grid">
-          <Value
-            icon={<GraduationCap />}
-            t="Развитие компетенций"
-            d="Изучение процессов, требований GMP и современных производственных подходов."
-          />
-          <Value
-            icon={<ShieldCheck />}
-            t="Культура качества"
-            d="Внимание к документации, установленным процедурам и результату каждой операции."
-          />
-          <Value
-            icon={<Users />}
-            t="Командная работа"
-            d="Взаимодействие производственных, лабораторных, инженерных и административных подразделений."
-          />
-          <Value
-            icon={<Cpu />}
-            t="Современные технологии"
-            d="Работа с автоматизированным оборудованием и цифровыми инструментами управления."
-          />
         </div>
       </ContentSection>
 

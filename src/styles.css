@@ -2804,9 +2804,6 @@ nav a.active {
   line-height: 1.55;
   color: var(--ink);
 }
-.career-value-grid .value {
-  min-height: 300px;
-}
 .career-process {
   margin: 0 5vw;
   padding: 90px 7vw;
