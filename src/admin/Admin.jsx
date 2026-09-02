@@ -557,13 +557,14 @@ function buildCmsCatalog() {
     }
   });
   const groupOrder = [
+    "global-header",
     "home",
     "about",
     "production",
     "quality",
     "products",
+    "career",
     "contacts",
-    "global-header",
     "global-footer",
   ];
   groups.sort(
@@ -1075,17 +1076,6 @@ export function Admin() {
         <Logo />
         <small>Разделы сайта</small>
         <nav className="admin-section-nav">
-          <button
-            className={activeGroup === "applications" ? "active" : ""}
-            onClick={() => {
-              setActiveGroup("applications");
-              setActiveBlock(null);
-              setSearch("");
-            }}
-          >
-            <span>Отклики кандидатов</span>
-            <b>{applications.length}</b>
-          </button>
           {catalog.map((item) => (
             <button
               className={activeGroup === item.id ? "active" : ""}
@@ -1100,6 +1090,17 @@ export function Admin() {
               <b>{item.blocks.length}</b>
             </button>
           ))}
+          <button
+            className={activeGroup === "applications" ? "active" : ""}
+            onClick={() => {
+              setActiveGroup("applications");
+              setActiveBlock(null);
+              setSearch("");
+            }}
+          >
+            <span>Отклики кандидатов</span>
+            <b>{applications.length}</b>
+          </button>
         </nav>
         <button
           onClick={() => {
