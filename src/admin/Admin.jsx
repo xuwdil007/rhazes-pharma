@@ -1150,7 +1150,6 @@ export function Admin() {
                         </small>
                         <h3>{application.name}</h3>
                       </div>
-                      <span>{application.direction}</span>
                     </header>
                     <dl>
                       <div>
@@ -1169,7 +1168,11 @@ export function Admin() {
                           </a>
                         </dd>
                       </div>
-                      <div className="admin-application-about">
+                      <div>
+                        <dt>Направление</dt>
+                        <dd>{application.direction}</dd>
+                      </div>
+                      <div>
                         <dt>Кратко о себе</dt>
                         <dd>{application.about}</dd>
                       </div>

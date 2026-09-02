@@ -3543,14 +3543,6 @@ footer {
   color: var(--muted);
   font-size: 12px;
 }
-.admin-application-list header > span {
-  padding: 8px 12px;
-  border-radius: 999px;
-  color: var(--green-dark);
-  background: rgba(0, 162, 122, 0.1);
-  font-size: 12px;
-  font-weight: 700;
-}
 .admin-application-list dl {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3566,8 +3558,10 @@ footer {
   line-height: 1.6;
   white-space: pre-wrap;
 }
-.admin-application-about {
-  grid-column: 1 / -1;
+@media (max-width: 620px) {
+  .admin-application-list dl {
+    grid-template-columns: 1fr;
+  }
 }
 .admin-stats {
   display: grid;
