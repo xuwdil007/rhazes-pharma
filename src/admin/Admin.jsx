@@ -618,7 +618,15 @@ export function Admin() {
   const [drafts, setDrafts] = useState({});
   const [savedKey, setSavedKey] = useState("");
   const [search, setSearch] = useState("");
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem("rhazes-job-applications") || "[]",
+      );
+    } catch {
+      return [];
+    }
+  });
 
   const catalog = useMemo(
     () =>
@@ -672,10 +680,16 @@ export function Admin() {
 
   useEffect(() => {
     if (!token) return;
-    if (isStaticSite) {
-      setApplications(
-        JSON.parse(localStorage.getItem("rhazes-job-applications") || "[]"),
+    let localApplications = [];
+    try {
+      localApplications = JSON.parse(
+        localStorage.getItem("rhazes-job-applications") || "[]",
       );
+    } catch {
+      localApplications = [];
+    }
+    if (isStaticSite) {
+      setApplications(localApplications);
       return;
     }
     fetch(`/api/applications?t=${Date.now()}`, {
@@ -686,7 +700,13 @@ export function Admin() {
         if (!response.ok) throw new Error("Не удалось загрузить отклики");
         return response.json();
       })
-      .then(setApplications)
+      .then((serverApplications) => {
+        const merged = [...serverApplications, ...localApplications].filter(
+          (application, index, list) =>
+            list.findIndex((item) => item.id === application.id) === index,
+        );
+        setApplications(merged);
+      })
       .catch((loadError) => setError(loadError.message));
   }, [token]);
 

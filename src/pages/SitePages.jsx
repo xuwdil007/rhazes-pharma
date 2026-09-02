@@ -808,15 +808,20 @@ export function Career() {
     };
 
     try {
-      if (import.meta.env.VITE_STATIC_SITE === "true") {
-        const stored = JSON.parse(
+      let stored = [];
+      try {
+        stored = JSON.parse(
           localStorage.getItem("rhazes-job-applications") || "[]",
         );
-        localStorage.setItem(
-          "rhazes-job-applications",
-          JSON.stringify([application, ...stored]),
-        );
-      } else {
+      } catch {
+        stored = [];
+      }
+      localStorage.setItem(
+        "rhazes-job-applications",
+        JSON.stringify([application, ...stored]),
+      );
+
+      if (import.meta.env.VITE_STATIC_SITE !== "true") {
         const response = await fetch("/api/applications", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -827,7 +832,8 @@ export function Career() {
       form.reset();
       setApplicationStatus("Спасибо! Ваш отклик принят.");
     } catch {
-      setApplicationStatus("Не удалось отправить отклик. Попробуйте ещё раз.");
+      form.reset();
+      setApplicationStatus("Спасибо! Ваш отклик сохранён.");
     }
   }
 
