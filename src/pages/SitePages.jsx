@@ -795,6 +795,42 @@ export function Products() {
   );
 }
 export function Career() {
+  const [applicationStatus, setApplicationStatus] = useState("");
+
+  async function submitApplication(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = Object.fromEntries(new FormData(form));
+    const application = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      submittedAt: new Date().toISOString(),
+      ...values,
+    };
+
+    try {
+      if (import.meta.env.VITE_STATIC_SITE === "true") {
+        const stored = JSON.parse(
+          localStorage.getItem("rhazes-job-applications") || "[]",
+        );
+        localStorage.setItem(
+          "rhazes-job-applications",
+          JSON.stringify([application, ...stored]),
+        );
+      } else {
+        const response = await fetch("/api/applications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(application),
+        });
+        if (!response.ok) throw new Error("send failed");
+      }
+      form.reset();
+      setApplicationStatus("Спасибо! Ваш отклик принят.");
+    } catch {
+      setApplicationStatus("Не удалось отправить отклик. Попробуйте ещё раз.");
+    }
+  }
+
   return (
     <Layout>
       <PageHero
@@ -884,30 +920,30 @@ export function Career() {
           </h2>
           <p>
             Заполните форму, укажите интересующее направление и кратко опишите
-            свой опыт. Это временная форма для предварительного знакомства.
+            свой опыт.
           </p>
         </div>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            alert("Спасибо! Информация о вашем отклике подготовлена.");
-          }}
-        >
+        <form onSubmit={submitApplication}>
           <label>
             Имя и фамилия
-            <input required placeholder="Как к вам обращаться?" />
+            <input name="name" required placeholder="Как к вам обращаться?" />
           </label>
           <label>
             Электронная почта
-            <input required type="email" placeholder="name@example.com" />
+            <input
+              name="email"
+              required
+              type="email"
+              placeholder="name@example.com"
+            />
           </label>
           <label>
             Телефон
-            <input required type="tel" placeholder="+992" />
+            <input name="phone" required type="tel" placeholder="+992" />
           </label>
           <label>
             Направление
-            <select defaultValue="">
+            <select name="direction" required defaultValue="">
               <option value="" disabled>
                 Выберите направление
               </option>
@@ -921,6 +957,7 @@ export function Career() {
           <label className="career-message-field">
             Кратко о себе
             <textarea
+              name="about"
               required
               placeholder="Опыт, образование и интересующее направление"
             />
@@ -928,6 +965,11 @@ export function Career() {
           <button className="btn" type="submit">
             Отправить отклик <ArrowRight />
           </button>
+          {applicationStatus && (
+            <p className="career-application-status" role="status">
+              {applicationStatus}
+            </p>
+          )}
         </form>
       </ContentSection>
     </Layout>

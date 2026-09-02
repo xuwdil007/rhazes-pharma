@@ -19,8 +19,78 @@ import (
 const maxBodySize = 16 << 20
 
 type server struct {
-	root, dataFile, login, password, secret string
-	contentMux                              sync.RWMutex
+	root, dataFile, applicationsFile, login, password, secret string
+	contentMux, applicationsMux                               sync.RWMutex
+}
+
+type application struct {
+	ID          string `json:"id"`
+	SubmittedAt string `json:"submittedAt"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	Direction   string `json:"direction"`
+	About       string `json:"about"`
+}
+
+func cleanField(value string, limit int) string {
+	value = strings.TrimSpace(value)
+	if len(value) > limit {
+		value = value[:limit]
+	}
+	return value
+}
+
+func (s *server) applicationsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
+	switch r.Method {
+	case http.MethodPost:
+		r.Body = http.MaxBytesReader(w, r.Body, 64<<10)
+		defer r.Body.Close()
+		var item application
+		if json.NewDecoder(r.Body).Decode(&item) != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Некорректные данные"})
+			return
+		}
+		item.ID = cleanField(item.ID, 100)
+		item.SubmittedAt = cleanField(item.SubmittedAt, 60)
+		item.Name = cleanField(item.Name, 180)
+		item.Email = cleanField(item.Email, 240)
+		item.Phone = cleanField(item.Phone, 80)
+		item.Direction = cleanField(item.Direction, 180)
+		item.About = cleanField(item.About, 4000)
+		if item.Name == "" || item.Email == "" || item.Phone == "" || item.Direction == "" || item.About == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Заполните все поля"})
+			return
+		}
+		s.applicationsMux.Lock()
+		defer s.applicationsMux.Unlock()
+		items := []application{}
+		if data, err := os.ReadFile(s.applicationsFile); err == nil {
+			_ = json.Unmarshal(data, &items)
+		}
+		items = append([]application{item}, items...)
+		data, _ := json.MarshalIndent(items, "", "  ")
+		if err := os.WriteFile(s.applicationsFile, append(data, '\n'), 0600); err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить отклик"})
+			return
+		}
+		writeJSON(w, http.StatusCreated, map[string]bool{"ok": true})
+	case http.MethodGet:
+		if !s.validToken(r) {
+			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "Требуется авторизация"})
+			return
+		}
+		s.applicationsMux.RLock()
+		defer s.applicationsMux.RUnlock()
+		items := []application{}
+		if data, err := os.ReadFile(s.applicationsFile); err == nil {
+			_ = json.Unmarshal(data, &items)
+		}
+		writeJSON(w, http.StatusOK, items)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
 }
 
 type tokenPayload struct {
@@ -189,15 +259,17 @@ func main() {
 	}
 	loadDotEnv(filepath.Join(root, ".env"))
 	app := &server{
-		root:     root,
-		dataFile: filepath.Join(root, "backend", "data", "content.json"),
-		login:    envOr("ADMIN_LOGIN", "admin"),
-		password: envOr("ADMIN_PASSWORD", "Rhazes2026!"),
-		secret:   envOr("ADMIN_SECRET", "change-this-secret-in-production"),
+		root:             root,
+		dataFile:         filepath.Join(root, "backend", "data", "content.json"),
+		applicationsFile: filepath.Join(root, "backend", "data", "applications.json"),
+		login:            envOr("ADMIN_LOGIN", "admin"),
+		password:         envOr("ADMIN_PASSWORD", "Rhazes2026!"),
+		secret:           envOr("ADMIN_SECRET", "change-this-secret-in-production"),
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/content", app.contentHandler)
 	mux.HandleFunc("/api/admin/login", app.loginHandler)
+	mux.HandleFunc("/api/applications", app.applicationsHandler)
 	mux.HandleFunc("/", app.staticHandler)
 	port := envOr("PORT", "4173")
 	log.Printf("Rhazes Pharma: http://localhost:%s", port)

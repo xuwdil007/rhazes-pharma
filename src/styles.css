@@ -2892,6 +2892,12 @@ nav a.active {
 .career-apply form .btn {
   width: max-content;
 }
+.career-application-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--green-dark);
+  font-weight: 700;
+}
 @media (max-width: 900px) {
   .career-process,
   .career-apply {
@@ -3468,6 +3474,100 @@ footer {
   backdrop-filter: var(--blur-sm);
   -webkit-backdrop-filter: var(--blur-sm);
   border: var(--glass-card-border);
+}
+.admin-content.applicants-mode > :not(header):not(.admin-applications) {
+  display: none;
+}
+.admin-applications {
+  padding: 40px clamp(24px, 4vw, 64px) 80px;
+}
+.admin-applications-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.admin-applications-head span {
+  color: var(--green-dark);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.admin-applications-head h2 {
+  margin: 7px 0 0;
+  font-size: clamp(28px, 3vw, 44px);
+}
+.admin-applications-head > b {
+  min-width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--green);
+}
+.admin-applications-empty {
+  padding: 48px;
+  border-radius: 24px;
+  color: var(--muted);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.admin-application-list {
+  display: grid;
+  gap: 18px;
+}
+.admin-application-list > article {
+  padding: 28px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 50px -40px rgba(13, 47, 37, 0.55);
+}
+.admin-application-list > article > header {
+  position: static;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: start;
+}
+.admin-application-list h3 {
+  margin: 5px 0 0;
+  font-size: 24px;
+}
+.admin-application-list small,
+.admin-application-list dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+.admin-application-list header > span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--green-dark);
+  background: rgba(0, 162, 122, 0.1);
+  font-size: 12px;
+  font-weight: 700;
+}
+.admin-application-list dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 24px 0 0;
+}
+.admin-application-list dl > div {
+  padding-top: 16px;
+  border-top: 1px solid rgba(12, 42, 33, 0.1);
+}
+.admin-application-list dd {
+  margin: 6px 0 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.admin-application-about {
+  grid-column: 1 / -1;
 }
 .admin-stats {
   display: grid;

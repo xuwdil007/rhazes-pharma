@@ -618,6 +618,7 @@ export function Admin() {
   const [drafts, setDrafts] = useState({});
   const [savedKey, setSavedKey] = useState("");
   const [search, setSearch] = useState("");
+  const [applications, setApplications] = useState([]);
 
   const catalog = useMemo(
     () =>
@@ -668,6 +669,26 @@ export function Admin() {
   useEffect(() => {
     sessionStorage.removeItem("rhazes-cms-edit");
   }, []);
+
+  useEffect(() => {
+    if (!token) return;
+    if (isStaticSite) {
+      setApplications(
+        JSON.parse(localStorage.getItem("rhazes-job-applications") || "[]"),
+      );
+      return;
+    }
+    fetch(`/api/applications?t=${Date.now()}`, {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Не удалось загрузить отклики");
+        return response.json();
+      })
+      .then(setApplications)
+      .catch((loadError) => setError(loadError.message));
+  }, [token]);
 
   async function submitLogin(event) {
     event.preventDefault();
@@ -1017,7 +1038,10 @@ export function Admin() {
     );
   }
 
-  const group = catalog.find((item) => item.id === activeGroup) || catalog[0];
+  const group =
+    activeGroup === "applications"
+      ? { id: "applications", name: "Отклики кандидатов", blocks: [] }
+      : catalog.find((item) => item.id === activeGroup) || catalog[0];
   const blocks = group.blocks.filter((block) =>
     `${block.name} ${block.entries.map((entry) => entry.preview).join(" ")}`
       .toLowerCase()
@@ -1031,6 +1055,17 @@ export function Admin() {
         <Logo />
         <small>Разделы сайта</small>
         <nav className="admin-section-nav">
+          <button
+            className={activeGroup === "applications" ? "active" : ""}
+            onClick={() => {
+              setActiveGroup("applications");
+              setActiveBlock(null);
+              setSearch("");
+            }}
+          >
+            <span>Отклики кандидатов</span>
+            <b>{applications.length}</b>
+          </button>
           {catalog.map((item) => (
             <button
               className={activeGroup === item.id ? "active" : ""}
@@ -1055,7 +1090,9 @@ export function Admin() {
           <LogOut /> Выйти
         </button>
       </aside>
-      <section className="admin-content">
+      <section
+        className={`admin-content ${activeGroup === "applications" ? "applicants-mode" : ""}`}
+      >
         <header>
           <div>
             <span>Управление сайтом</span>
@@ -1065,6 +1102,64 @@ export function Admin() {
             Открыть сайт <ArrowUpRight />
           </a>
         </header>
+        {activeGroup === "applications" && (
+          <div className="admin-applications">
+            <div className="admin-applications-head">
+              <div>
+                <span>Карьера</span>
+                <h2>Полученные отклики</h2>
+              </div>
+              <b>{applications.length}</b>
+            </div>
+            {applications.length === 0 ? (
+              <div className="admin-applications-empty">
+                Пока нет откликов кандидатов.
+              </div>
+            ) : (
+              <div className="admin-application-list">
+                {applications.map((application) => (
+                  <article key={application.id}>
+                    <header>
+                      <div>
+                        <small>
+                          {application.submittedAt
+                            ? new Date(application.submittedAt).toLocaleString(
+                                "ru-RU",
+                              )
+                            : "Дата не указана"}
+                        </small>
+                        <h3>{application.name}</h3>
+                      </div>
+                      <span>{application.direction}</span>
+                    </header>
+                    <dl>
+                      <div>
+                        <dt>Электронная почта</dt>
+                        <dd>
+                          <a href={`mailto:${application.email}`}>
+                            {application.email}
+                          </a>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Телефон</dt>
+                        <dd>
+                          <a href={`tel:${application.phone}`}>
+                            {application.phone}
+                          </a>
+                        </dd>
+                      </div>
+                      <div className="admin-application-about">
+                        <dt>Кратко о себе</dt>
+                        <dd>{application.about}</dd>
+                      </div>
+                    </dl>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div className="admin-stats">
           <article>
             <strong>{catalog.length}</strong>
