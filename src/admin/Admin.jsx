@@ -103,6 +103,14 @@ function getEditableAttributes(scope, root, region) {
       label: element.dataset.cmsImage || "Изображение",
       original: element.getAttribute("src") || "",
     })),
+    ...[...scope.querySelectorAll("a[data-cms-link]")].map((element) => ({
+      key: getCmsAttributeKey(element, root, region, "href"),
+      element,
+      attribute: "href",
+      type: "link",
+      label: element.dataset.cmsLink || "Ссылка",
+      original: element.getAttribute("href") || "",
+    })),
   ];
 }
 
@@ -537,6 +545,18 @@ function buildCmsCatalog() {
               preview: node.nodeValue.trim().slice(0, 90),
             }))
           : [];
+        if (root) {
+          getEditableAttributes(root, root, region).forEach((attribute) => {
+            globalEntries.push({
+              key: attribute.key,
+              parts: [{ key: attribute.key, original: attribute.original }],
+              type: attribute.type,
+              label: attribute.label,
+              original: attribute.original,
+              preview: attribute.label,
+            });
+          });
+        }
         groups.unshift({
           id: region,
           name: regionName,
@@ -1320,6 +1340,18 @@ export function Admin() {
                           />
                         </div>
                       </div>
+                    ) : entry.type === "link" ? (
+                      <input
+                        className="admin-link-url"
+                        value={value}
+                        placeholder="https://..."
+                        onChange={(event) =>
+                          setDrafts((current) => ({
+                            ...current,
+                            [entry.key]: event.target.value,
+                          }))
+                        }
+                      />
                     ) : (
                       <textarea
                         value={value}

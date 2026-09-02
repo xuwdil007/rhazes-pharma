@@ -2,6 +2,24 @@ import React, { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, Send, X } from "lucide-react";
 import { navigation as nav } from "../../data/siteContent.js";
 
+function LinkedInIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6.5 8.25H3.25V21H6.5V8.25ZM4.88 3A1.88 1.88 0 1 0 4.88 6.75 1.88 1.88 0 0 0 4.88 3ZM21 13.7c0-3.84-2.05-5.63-4.79-5.63-2.2 0-3.19 1.21-3.74 2.06V8.25H9.22V21h3.25v-6.32c0-1.67.32-3.29 2.39-3.29 2.04 0 2.06 1.91 2.06 3.4V21H21v-7.3Z" />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4.25" />
+      <circle cx="17.4" cy="6.7" r="1" className="instagram-dot" />
+    </svg>
+  );
+}
+
 export function Logo({ light = false }) {
   return (
     <a
@@ -122,8 +140,24 @@ export function Footer() {
           <a href="mailto:info@rhazes.tj">info@rhazes.tj</a>
           <a href="#/contacts">Душанбе, Таджикистан</a>
           <div className="social">
-            <a aria-label="Социальная сеть">in</a>
-            <a aria-label="Социальная сеть">ig</a>
+            <a
+              data-cms-link="Ссылка на LinkedIn"
+              href="#"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+            >
+              <LinkedInIcon />
+            </a>
+            <a
+              data-cms-link="Ссылка на Instagram"
+              href="#"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <InstagramIcon />
+            </a>
             <a aria-label="Telegram">
               <Send />
             </a>

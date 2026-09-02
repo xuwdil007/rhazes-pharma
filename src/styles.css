@@ -3086,6 +3086,17 @@ footer {
 }
 .social svg {
   width: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+.social a[aria-label="LinkedIn"] svg {
+  fill: currentColor;
+  stroke: none;
+}
+.social .instagram-dot {
+  fill: currentColor;
+  stroke: none;
 }
 .copyright {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -3849,6 +3860,20 @@ footer {
   border-radius: 12px;
   padding: 0 14px;
   background: rgba(255, 255, 255, 0.72);
+}
+.admin-link-url {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 18px;
+  border: 1px solid rgba(12, 42, 33, 0.16);
+  border-radius: 14px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.76);
+  font: inherit;
+}
+.admin-link-url:focus {
+  outline: 0;
+  border-color: var(--green);
 }
 .admin-field-buttons {
   display: flex;
