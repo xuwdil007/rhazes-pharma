@@ -32,6 +32,7 @@ import {
 } from "../components/ui/SiteUi.jsx";
 import { TabletProductionSection } from "../components/sections/ProductionSections.jsx";
 import { EngineeringInfrastructureSection } from "../components/sections/EngineeringInfrastructureSection.jsx";
+import { ProductionEquipmentSection } from "../components/sections/ProductionEquipmentSection.jsx";
 
 export function Home() {
   return (
@@ -344,6 +345,7 @@ export function Production() {
           />
         </div>
       </ContentSection>
+      <ProductionEquipmentSection />
       <EngineeringInfrastructureSection />
       <ContentSection className="digital section">
         <Eyebrow>Цифровая трансформация</Eyebrow>
