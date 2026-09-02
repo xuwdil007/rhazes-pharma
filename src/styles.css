@@ -1572,9 +1572,10 @@ nav a.active {
   grid-column: 1 / -1;
 }
 .equipment-modal-close {
-  position: absolute;
+  position: fixed;
   top: 26px;
-  right: 26px;
+  right: max(26px, calc((100vw - 1180px) / 2 + 26px));
+  z-index: 3;
   width: 48px;
   height: 48px;
   display: grid;
@@ -1617,6 +1618,10 @@ nav a.active {
   }
   .equipment-modal h2 {
     font-size: 34px;
+  }
+  .equipment-modal-close {
+    top: 14px;
+    right: 14px;
   }
   .equipment-modal-grid > section {
     grid-template-columns: 1fr;
