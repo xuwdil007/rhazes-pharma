@@ -49,7 +49,7 @@ export function Header() {
   };
 
   return (
-    <header className={scrolled ? "site-header-scrolled" : ""}>
+    <header className={`site-header ${scrolled ? "site-header-scrolled" : ""}`}>
       <div className="navwrap">
         <Logo />
         <nav className={open ? "open" : ""}>

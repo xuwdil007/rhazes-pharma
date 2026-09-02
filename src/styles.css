@@ -104,7 +104,7 @@ em {
   }
 }
 
-header {
+.site-header {
   position: sticky;
   z-index: 1000;
   top: 0;
@@ -1480,7 +1480,7 @@ nav a.active {
   z-index: 1200;
   padding: 32px;
   display: grid;
-  place-items: center;
+  place-items: start center;
   overflow-y: auto;
   scrollbar-width: none;
   background: rgba(9, 30, 24, 0.56);
