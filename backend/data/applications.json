@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "1788335551461-yerh66",
+    "submittedAt": "2026-09-02T07:52:31.461Z",
+    "name": "Amir",
+    "email": "amir1@icloud.com",
+    "phone": "931800759",
+    "direction": "Лаборатории и контроль качества",
+    "about": "asder"
+  },
+  {
+    "id": "1788335387683-v0n1gz",
+    "submittedAt": "2026-09-02T07:49:47.683Z",
+    "name": "Xuwdil",
+    "email": "luffyyggear5@gmail.com",
+    "phone": "987066165",
+    "direction": "Инженерия и автоматизация",
+    "about": "привет мир"
+  }
+]

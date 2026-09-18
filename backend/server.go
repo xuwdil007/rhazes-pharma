@@ -267,6 +267,9 @@ func main() {
 		secret:           envOr("ADMIN_SECRET", "change-this-secret-in-production"),
 	}
 	mux := http.NewServeMux()
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
+	})
 	mux.HandleFunc("/api/content", app.contentHandler)
 	mux.HandleFunc("/api/admin/login", app.loginHandler)
 	mux.HandleFunc("/api/applications", app.applicationsHandler)
@@ -274,5 +277,13 @@ func main() {
 	port := envOr("PORT", "4173")
 	log.Printf("Rhazes Pharma: http://localhost:%s", port)
 	log.Printf("Admin: http://localhost:%s/#/admin", port)
-	log.Fatal(http.ListenAndServe(":"+port, mux))
+	httpServer := &http.Server{
+		Addr:              ":" + port,
+		Handler:           mux,
+		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       90 * time.Second,
+	}
+	log.Fatal(httpServer.ListenAndServe())
 }
