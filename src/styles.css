@@ -43,6 +43,9 @@
 }
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -50,6 +53,14 @@ body {
   color: var(--ink);
   background: #eef2f0;
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 body::before {
   content: "";
@@ -4450,6 +4461,75 @@ footer {
   }
 }
 @media (max-width: 560px) {
+  .hero {
+    display: flex;
+    height: auto;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    background: #10241d;
+  }
+  .hero > img {
+    position: relative;
+    width: 100%;
+    height: clamp(260px, 88vw, 390px);
+    flex: none;
+    object-fit: cover;
+    object-position: center 28%;
+  }
+  .hero-shade {
+    top: 0;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    height: clamp(260px, 88vw, 390px);
+    background: linear-gradient(
+      180deg,
+      rgba(8, 20, 16, 0.08),
+      rgba(8, 20, 16, 0.3)
+    );
+  }
+  .hero-content {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: 30px 20px 38px;
+    transform: none;
+    background: linear-gradient(160deg, #142b23, #0b1c16);
+  }
+  .hero-content:before {
+    display: none;
+  }
+  .hero .eyebrow {
+    max-width: 100%;
+    margin-bottom: 22px;
+    white-space: normal;
+  }
+  .hero h1 {
+    max-width: 100%;
+    margin-bottom: 22px;
+    font-size: clamp(38px, 12vw, 52px);
+    line-height: 1.02;
+    overflow-wrap: anywhere;
+  }
+  .hero p {
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .hero-actions {
+    width: 100%;
+    margin-top: 28px;
+  }
+  .hero-actions .btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: space-between;
+  }
   .admin-image-field {
     grid-template-columns: 1fr;
   }
