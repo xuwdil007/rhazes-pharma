@@ -2,9 +2,11 @@ package main
 
 import (
 	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -19,8 +21,59 @@ import (
 const maxBodySize = 16 << 20
 
 type server struct {
-	root, dataFile, applicationsFile, login, password, secret string
-	contentMux, applicationsMux                               sync.RWMutex
+	root, dataFile, applicationsFile, credentialsFile, secret string
+	login, password, passwordSalt, passwordHash               string
+	contentMux, applicationsMux, authMux                      sync.RWMutex
+}
+
+type storedCredentials struct {
+	Login        string `json:"login"`
+	PasswordSalt string `json:"passwordSalt"`
+	PasswordHash string `json:"passwordHash"`
+}
+
+func hashPassword(password, salt string) string {
+	sum := sha256.Sum256([]byte(salt + password))
+	for i := 0; i < 120000; i++ {
+		next := sha256.New()
+		_, _ = next.Write(sum[:])
+		_, _ = next.Write([]byte(salt))
+		sum = sha256.Sum256(next.Sum(nil))
+	}
+	return hex.EncodeToString(sum[:])
+}
+
+func newPasswordSalt() (string, error) {
+	data := make([]byte, 24)
+	if _, err := rand.Read(data); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(data), nil
+}
+
+func (s *server) loadCredentials() {
+	data, err := os.ReadFile(s.credentialsFile)
+	if err != nil {
+		return
+	}
+	var saved storedCredentials
+	if json.Unmarshal(data, &saved) == nil && saved.Login != "" && saved.PasswordSalt != "" && saved.PasswordHash != "" {
+		s.login = saved.Login
+		s.password = ""
+		s.passwordSalt = saved.PasswordSalt
+		s.passwordHash = saved.PasswordHash
+	}
+}
+
+func (s *server) validCredentials(login, password string) bool {
+	s.authMux.RLock()
+	defer s.authMux.RUnlock()
+	loginOK := subtle.ConstantTimeCompare([]byte(login), []byte(s.login)) == 1
+	if s.passwordHash != "" {
+		candidate := hashPassword(password, s.passwordSalt)
+		return loginOK && subtle.ConstantTimeCompare([]byte(candidate), []byte(s.passwordHash)) == 1
+	}
+	return loginOK && subtle.ConstantTimeCompare([]byte(password), []byte(s.password)) == 1
 }
 
 type application struct {
@@ -160,7 +213,10 @@ func (s *server) signature(payload string) string {
 }
 
 func (s *server) createToken() string {
-	payload, _ := json.Marshal(tokenPayload{s.login, time.Now().Add(8 * time.Hour).UnixMilli()})
+	s.authMux.RLock()
+	login := s.login
+	s.authMux.RUnlock()
+	payload, _ := json.Marshal(tokenPayload{login, time.Now().Add(8 * time.Hour).UnixMilli()})
 	encoded := base64.RawURLEncoding.EncodeToString(payload)
 	return encoded + "." + s.signature(encoded)
 }
@@ -176,7 +232,10 @@ func (s *server) validToken(r *http.Request) bool {
 		return false
 	}
 	var data tokenPayload
-	return json.Unmarshal(decoded, &data) == nil && data.Login == s.login && data.Expires >= time.Now().UnixMilli()
+	s.authMux.RLock()
+	login := s.login
+	s.authMux.RUnlock()
+	return json.Unmarshal(decoded, &data) == nil && data.Login == login && data.Expires >= time.Now().UnixMilli()
 }
 
 func (s *server) contentHandler(w http.ResponseWriter, r *http.Request) {
@@ -233,10 +292,73 @@ func (s *server) loginHandler(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Некорректные данные"})
 		return
 	}
-	loginOK := subtle.ConstantTimeCompare([]byte(credentials.Login), []byte(s.login)) == 1
-	passwordOK := subtle.ConstantTimeCompare([]byte(credentials.Password), []byte(s.password)) == 1
-	if !loginOK || !passwordOK {
+	if !s.validCredentials(credentials.Login, credentials.Password) {
 		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "Неверный логин или пароль"})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"token": s.createToken()})
+}
+
+func (s *server) credentialsHandler(w http.ResponseWriter, r *http.Request) {
+	if !s.validToken(r) {
+		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "Требуется авторизация"})
+		return
+	}
+	if r.Method == http.MethodGet {
+		s.authMux.RLock()
+		login := s.login
+		s.authMux.RUnlock()
+		writeJSON(w, http.StatusOK, map[string]string{"login": login})
+		return
+	}
+	if r.Method != http.MethodPut {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, 32<<10)
+	defer r.Body.Close()
+	var incoming struct {
+		Login    string `json:"login"`
+		Password string `json:"password"`
+	}
+	if json.NewDecoder(r.Body).Decode(&incoming) != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Некорректные данные"})
+		return
+	}
+	incoming.Login = cleanField(incoming.Login, 80)
+	if len(incoming.Login) < 3 {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Логин должен содержать не менее 3 символов"})
+		return
+	}
+	if len(incoming.Password) < 8 || len(incoming.Password) > 256 {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Пароль должен содержать от 8 до 256 символов"})
+		return
+	}
+	salt, err := newPasswordSalt()
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось подготовить пароль"})
+		return
+	}
+	saved := storedCredentials{
+		Login:        incoming.Login,
+		PasswordSalt: salt,
+		PasswordHash: hashPassword(incoming.Password, salt),
+	}
+	data, err := json.MarshalIndent(saved, "", "  ")
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить настройки"})
+		return
+	}
+	s.authMux.Lock()
+	if err = os.WriteFile(s.credentialsFile, append(data, '\n'), 0600); err == nil {
+		s.login = saved.Login
+		s.password = ""
+		s.passwordSalt = saved.PasswordSalt
+		s.passwordHash = saved.PasswordHash
+	}
+	s.authMux.Unlock()
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить настройки"})
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"token": s.createToken()})
@@ -262,16 +384,19 @@ func main() {
 		root:             root,
 		dataFile:         filepath.Join(root, "backend", "data", "content.json"),
 		applicationsFile: filepath.Join(root, "backend", "data", "applications.json"),
+		credentialsFile:  filepath.Join(root, "backend", "data", "credentials.json"),
 		login:            envOr("ADMIN_LOGIN", "admin"),
 		password:         envOr("ADMIN_PASSWORD", "Rhazes2026!"),
 		secret:           envOr("ADMIN_SECRET", "change-this-secret-in-production"),
 	}
+	app.loadCredentials()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
 	})
 	mux.HandleFunc("/api/content", app.contentHandler)
 	mux.HandleFunc("/api/admin/login", app.loginHandler)
+	mux.HandleFunc("/api/admin/credentials", app.credentialsHandler)
 	mux.HandleFunc("/api/applications", app.applicationsHandler)
 	mux.HandleFunc("/", app.staticHandler)
 	port := envOr("PORT", "4173")

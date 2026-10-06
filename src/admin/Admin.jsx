@@ -31,6 +31,14 @@ const isStaticSite = import.meta.env.VITE_STATIC_SITE === "true";
 const staticAdminLogin = "admin";
 const staticAdminPassword = "Rhazes2026!";
 
+function getStaticCredentials() {
+  try {
+    return JSON.parse(localStorage.getItem("rhazes-admin-credentials")) || {};
+  } catch {
+    return {};
+  }
+}
+
 function storeLocalContent(content) {
   localStorage.setItem("rhazes-cms-content", JSON.stringify(content));
   window.dispatchEvent(
@@ -639,6 +647,10 @@ export function Admin() {
   const [drafts, setDrafts] = useState({});
   const [savedKey, setSavedKey] = useState("");
   const [search, setSearch] = useState("");
+  const [settingsLogin, setSettingsLogin] = useState("");
+  const [settingsPassword, setSettingsPassword] = useState("");
+  const [settingsPasswordAgain, setSettingsPasswordAgain] = useState("");
+  const [credentialsSaved, setCredentialsSaved] = useState(false);
   const [applications, setApplications] = useState(() => {
     try {
       return JSON.parse(
@@ -731,12 +743,34 @@ export function Admin() {
       .catch((loadError) => setError(loadError.message));
   }, [token]);
 
+  useEffect(() => {
+    if (!token || activeGroup !== "credentials") return;
+    if (isStaticSite) {
+      const savedCredentials = getStaticCredentials();
+      setSettingsLogin(savedCredentials.login || staticAdminLogin);
+      return;
+    }
+    fetch("/api/admin/credentials", {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Не удалось загрузить настройки");
+        setSettingsLogin(data.login || "");
+      })
+      .catch((loadError) => setError(loadError.message));
+  }, [activeGroup, token]);
+
   async function submitLogin(event) {
     event.preventDefault();
     setError("");
     try {
       if (isStaticSite) {
-        if (login !== staticAdminLogin || password !== staticAdminPassword) {
+        const savedCredentials = getStaticCredentials();
+        const expectedLogin = savedCredentials.login || staticAdminLogin;
+        const expectedPassword = savedCredentials.password || staticAdminPassword;
+        if (login !== expectedLogin || password !== expectedPassword) {
           throw new Error("Неверный логин или пароль");
         }
         const staticToken = "static-admin-session";
@@ -787,6 +821,50 @@ export function Admin() {
     localStorage.setItem("rhazes-cms-content", "{}");
     setContent({});
     setDrafts({});
+  }
+
+  async function saveCredentials(event) {
+    event.preventDefault();
+    setError("");
+    setCredentialsSaved(false);
+    const nextLogin = settingsLogin.trim();
+    if (nextLogin.length < 3) {
+      return setError("Логин должен содержать не менее 3 символов");
+    }
+    if (settingsPassword.length < 8) {
+      return setError("Пароль должен содержать не менее 8 символов");
+    }
+    if (settingsPassword !== settingsPasswordAgain) {
+      return setError("Введённые пароли не совпадают");
+    }
+    try {
+      if (isStaticSite) {
+        localStorage.setItem(
+          "rhazes-admin-credentials",
+          JSON.stringify({ login: nextLogin, password: settingsPassword }),
+        );
+      } else {
+        const response = await fetch("/api/admin/credentials", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ login: nextLogin, password: settingsPassword }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Не удалось изменить данные входа");
+        sessionStorage.setItem("rhazes-admin-token", data.token);
+        setToken(data.token);
+      }
+      setLogin(nextLogin);
+      setPassword("");
+      setSettingsPassword("");
+      setSettingsPasswordAgain("");
+      setCredentialsSaved(true);
+    } catch (saveError) {
+      setError(saveError.message || "Не удалось изменить данные входа");
+    }
   }
 
   async function persist(nextContent) {
@@ -1082,7 +1160,9 @@ export function Admin() {
   const group =
     activeGroup === "applications"
       ? { id: "applications", name: "Отклики кандидатов", blocks: [] }
-      : catalog.find((item) => item.id === activeGroup) || catalog[0];
+      : activeGroup === "credentials"
+        ? { id: "credentials", name: "Настройки входа", blocks: [] }
+        : catalog.find((item) => item.id === activeGroup) || catalog[0];
   const blocks = group.blocks.filter((block) =>
     `${block.name} ${block.entries.map((entry) => entry.preview).join(" ")}`
       .toLowerCase()
@@ -1121,6 +1201,20 @@ export function Admin() {
             <span>Отклики кандидатов</span>
             <b>{applications.length}</b>
           </button>
+          <button
+            className={activeGroup === "credentials" ? "active" : ""}
+            onClick={() => {
+              setActiveGroup("credentials");
+              setActiveBlock(null);
+              setSearch("");
+              setError("");
+              setCredentialsSaved(false);
+              setSettingsLogin(login);
+            }}
+          >
+            <span>Настройки входа</span>
+            <b>1</b>
+          </button>
         </nav>
         <button
           onClick={() => {
@@ -1132,7 +1226,7 @@ export function Admin() {
         </button>
       </aside>
       <section
-        className={`admin-content ${activeGroup === "applications" ? "applicants-mode" : ""}`}
+        className={`admin-content ${activeGroup === "applications" ? "applicants-mode" : ""} ${activeGroup === "credentials" ? "credentials-mode" : ""}`}
       >
         <header>
           <div>
@@ -1202,6 +1296,62 @@ export function Admin() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+        {activeGroup === "credentials" && (
+          <div className="admin-credentials">
+            <div className="admin-applications-head">
+              <div>
+                <span>Безопасность</span>
+                <h2>Логин и пароль администратора</h2>
+              </div>
+            </div>
+            <p className="admin-credentials-note">
+              После сохранения следующий вход в административную панель будет
+              выполняться с новыми данными.
+            </p>
+            <form onSubmit={saveCredentials}>
+              <label>
+                <span>Новый логин</span>
+                <input
+                  value={settingsLogin}
+                  onChange={(event) => setSettingsLogin(event.target.value)}
+                  autoComplete="username"
+                  required
+                />
+              </label>
+              <label>
+                <span>Новый пароль</span>
+                <input
+                  value={settingsPassword}
+                  onChange={(event) => setSettingsPassword(event.target.value)}
+                  type="password"
+                  autoComplete="new-password"
+                  minLength="8"
+                  required
+                />
+              </label>
+              <label>
+                <span>Повторите новый пароль</span>
+                <input
+                  value={settingsPasswordAgain}
+                  onChange={(event) =>
+                    setSettingsPasswordAgain(event.target.value)
+                  }
+                  type="password"
+                  autoComplete="new-password"
+                  minLength="8"
+                  required
+                />
+              </label>
+              {error && <p className="admin-error">{error}</p>}
+              {credentialsSaved && (
+                <p className="admin-success">Данные для входа изменены.</p>
+              )}
+              <button className="btn" type="submit">
+                Сохранить новые данные <Save size={17} />
+              </button>
+            </form>
           </div>
         )}
         <div className="admin-stats">
