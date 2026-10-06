@@ -660,6 +660,15 @@ export function Admin() {
       return [];
     }
   });
+  const [contactMessages, setContactMessages] = useState(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem("rhazes-contact-messages") || "[]",
+      );
+    } catch {
+      return [];
+    }
+  });
 
   const catalog = useMemo(
     () =>
@@ -739,6 +748,38 @@ export function Admin() {
             list.findIndex((item) => item.id === application.id) === index,
         );
         setApplications(merged);
+      })
+      .catch((loadError) => setError(loadError.message));
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+    let localMessages = [];
+    try {
+      localMessages = JSON.parse(
+        localStorage.getItem("rhazes-contact-messages") || "[]",
+      );
+    } catch {
+      localMessages = [];
+    }
+    if (isStaticSite) {
+      setContactMessages(localMessages);
+      return;
+    }
+    fetch(`/api/messages?t=${Date.now()}`, {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Не удалось загрузить сообщения");
+        return response.json();
+      })
+      .then((serverMessages) => {
+        const merged = [...serverMessages, ...localMessages].filter(
+          (message, index, list) =>
+            list.findIndex((item) => item.id === message.id) === index,
+        );
+        setContactMessages(merged);
       })
       .catch((loadError) => setError(loadError.message));
   }, [token]);
@@ -1160,6 +1201,8 @@ export function Admin() {
   const group =
     activeGroup === "applications"
       ? { id: "applications", name: "Отклики кандидатов", blocks: [] }
+      : activeGroup === "messages"
+        ? { id: "messages", name: "Сообщения из контактов", blocks: [] }
       : activeGroup === "credentials"
         ? { id: "credentials", name: "Настройки входа", blocks: [] }
         : catalog.find((item) => item.id === activeGroup) || catalog[0];
@@ -1202,6 +1245,17 @@ export function Admin() {
             <b>{applications.length}</b>
           </button>
           <button
+            className={activeGroup === "messages" ? "active" : ""}
+            onClick={() => {
+              setActiveGroup("messages");
+              setActiveBlock(null);
+              setSearch("");
+            }}
+          >
+            <span>Сообщения из контактов</span>
+            <b>{contactMessages.length}</b>
+          </button>
+          <button
             className={activeGroup === "credentials" ? "active" : ""}
             onClick={() => {
               setActiveGroup("credentials");
@@ -1226,7 +1280,7 @@ export function Admin() {
         </button>
       </aside>
       <section
-        className={`admin-content ${activeGroup === "applications" ? "applicants-mode" : ""} ${activeGroup === "credentials" ? "credentials-mode" : ""}`}
+        className={`admin-content ${activeGroup === "applications" ? "applicants-mode" : ""} ${activeGroup === "messages" ? "messages-mode" : ""} ${activeGroup === "credentials" ? "credentials-mode" : ""}`}
       >
         <header>
           <div>
@@ -1290,6 +1344,59 @@ export function Admin() {
                       <div>
                         <dt>Кратко о себе</dt>
                         <dd>{application.about}</dd>
+                      </div>
+                    </dl>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {activeGroup === "messages" && (
+          <div className="admin-contact-messages">
+            <div className="admin-applications-head">
+              <div>
+                <span>Контакты</span>
+                <h2>Полученные сообщения</h2>
+              </div>
+              <b>{contactMessages.length}</b>
+            </div>
+            {contactMessages.length === 0 ? (
+              <div className="admin-applications-empty">
+                Пока нет сообщений из формы контактов.
+              </div>
+            ) : (
+              <div className="admin-application-list">
+                {contactMessages.map((message) => (
+                  <article key={message.id}>
+                    <header>
+                      <div>
+                        <small>
+                          {message.submittedAt
+                            ? new Date(message.submittedAt).toLocaleString(
+                                "ru-RU",
+                              )
+                            : "Дата не указана"}
+                        </small>
+                        <h3>{message.name}</h3>
+                      </div>
+                    </header>
+                    <dl>
+                      <div>
+                        <dt>Электронная почта</dt>
+                        <dd>
+                          <a href={`mailto:${message.email}`}>
+                            {message.email}
+                          </a>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Тема</dt>
+                        <dd>{message.subject}</dd>
+                      </div>
+                      <div className="admin-message-text">
+                        <dt>Сообщение</dt>
+                        <dd>{message.message}</dd>
                       </div>
                     </dl>
                   </article>

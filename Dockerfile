@@ -23,6 +23,7 @@ COPY --from=frontend --chown=app:app /app/dist ./dist
 COPY --from=backend /server /usr/local/bin/rhazes-server
 COPY --chown=app:app backend/data/content.json ./backend/data/content.json
 RUN printf '[]\n' > backend/data/applications.json \
+    && printf '[]\n' > backend/data/messages.json \
     && chown -R app:app backend/data
 ENV PORT=4173 TZ=Asia/Dushanbe
 USER app

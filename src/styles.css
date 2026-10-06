@@ -2934,6 +2934,12 @@ nav a.active {
   color: var(--green-dark);
   font-weight: 700;
 }
+.contact-message-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--green-dark);
+  font-weight: 700;
+}
 @media (max-width: 900px) {
   .career-process,
   .career-apply {
@@ -3525,10 +3531,14 @@ footer {
 .admin-content.applicants-mode > :not(header):not(.admin-applications) {
   display: none;
 }
+.admin-content.messages-mode > :not(header):not(.admin-contact-messages) {
+  display: none;
+}
 .admin-content.credentials-mode > :not(header):not(.admin-credentials) {
   display: none;
 }
-.admin-applications {
+.admin-applications,
+.admin-contact-messages {
   padding: 40px clamp(24px, 4vw, 64px) 80px;
 }
 .admin-credentials {
@@ -3659,6 +3669,9 @@ footer {
   margin: 6px 0 0;
   line-height: 1.6;
   white-space: pre-wrap;
+}
+.admin-application-list dl > .admin-message-text {
+  grid-column: 1 / -1;
 }
 @media (max-width: 620px) {
   .admin-application-list dl {
@@ -4623,7 +4636,8 @@ footer {
     padding: 30px 18px;
   }
   .admin-credentials,
-  .admin-applications {
+  .admin-applications,
+  .admin-contact-messages {
     padding: 24px 0 60px;
   }
   .admin-credentials form {

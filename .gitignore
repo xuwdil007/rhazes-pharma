@@ -12,3 +12,4 @@ Thumbs.db
 .vscode/
 backups/
 backend/data/credentials.json
+backend/data/messages.json

@@ -7,6 +7,7 @@ dist
 !.env.example
 backend/data/applications.json
 backend/data/credentials.json
+backend/data/messages.json
 *.log
 *.tmp
 *.docx

@@ -983,6 +983,48 @@ export function Career() {
 }
 
 export function Contacts() {
+  const [messageStatus, setMessageStatus] = useState("");
+
+  async function submitContactMessage(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = Object.fromEntries(new FormData(form));
+    const message = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      submittedAt: new Date().toISOString(),
+      ...values,
+    };
+
+    try {
+      let stored = [];
+      try {
+        stored = JSON.parse(
+          localStorage.getItem("rhazes-contact-messages") || "[]",
+        );
+      } catch {
+        stored = [];
+      }
+      localStorage.setItem(
+        "rhazes-contact-messages",
+        JSON.stringify([message, ...stored]),
+      );
+
+      if (import.meta.env.VITE_STATIC_SITE !== "true") {
+        const response = await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(message),
+        });
+        if (!response.ok) throw new Error("send failed");
+      }
+      form.reset();
+      setMessageStatus("Спасибо! Ваше сообщение отправлено.");
+    } catch {
+      form.reset();
+      setMessageStatus("Спасибо! Ваше сообщение сохранено.");
+    }
+  }
+
   useEffect(() => {
     const requestedByUrl = window.location.hash.includes("?form=1");
     if (
@@ -1058,28 +1100,24 @@ export function Contacts() {
         </div>
         <form
           id="contact-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            alert(
-              e.currentTarget.querySelector(".contact-success-copy")
-                ?.textContent || "",
-            );
-          }}
+          onSubmit={submitContactMessage}
         >
-          <span className="contact-success-copy" hidden>
-            Спасибо! Сообщение подготовлено к отправке.
-          </span>
           <label>
             Ваше имя
-            <input required placeholder="Как к вам обращаться?" />
+            <input name="name" required placeholder="Как к вам обращаться?" />
           </label>
           <label>
             Электронная почта
-            <input required type="email" placeholder="name@company.com" />
+            <input
+              name="email"
+              required
+              type="email"
+              placeholder="name@company.com"
+            />
           </label>
           <label>
             Тема
-            <select>
+            <select name="subject" required>
               <option>Сотрудничество</option>
               <option>Карьера</option>
               <option>Продукция</option>
@@ -1088,7 +1126,11 @@ export function Contacts() {
           </label>
           <label>
             Сообщение
-            <textarea required placeholder="Расскажите, чем мы можем помочь" />
+            <textarea
+              name="message"
+              required
+              placeholder="Расскажите, чем мы можем помочь"
+            />
           </label>
           <button className="btn">
             Отправить сообщение <ArrowRight />
@@ -1096,6 +1138,11 @@ export function Contacts() {
           <small>
             Нажимая кнопку, вы соглашаетесь с политикой обработки данных.
           </small>
+          {messageStatus && (
+            <p className="contact-message-status" role="status">
+              {messageStatus}
+            </p>
+          )}
         </form>
       </ContentSection>
     </Layout>

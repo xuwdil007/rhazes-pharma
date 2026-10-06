@@ -21,9 +21,9 @@ import (
 const maxBodySize = 16 << 20
 
 type server struct {
-	root, dataFile, applicationsFile, credentialsFile, secret string
-	login, password, passwordSalt, passwordHash               string
-	contentMux, applicationsMux, authMux                      sync.RWMutex
+	root, dataFile, applicationsFile, messagesFile, credentialsFile, secret string
+	login, password, passwordSalt, passwordHash                             string
+	contentMux, applicationsMux, messagesMux, authMux                       sync.RWMutex
 }
 
 type storedCredentials struct {
@@ -86,6 +86,15 @@ type application struct {
 	About       string `json:"about"`
 }
 
+type contactMessage struct {
+	ID          string `json:"id"`
+	SubmittedAt string `json:"submittedAt"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Subject     string `json:"subject"`
+	Message     string `json:"message"`
+}
+
 func cleanField(value string, limit int) string {
 	value = strings.TrimSpace(value)
 	if len(value) > limit {
@@ -138,6 +147,57 @@ func (s *server) applicationsHandler(w http.ResponseWriter, r *http.Request) {
 		defer s.applicationsMux.RUnlock()
 		items := []application{}
 		if data, err := os.ReadFile(s.applicationsFile); err == nil {
+			_ = json.Unmarshal(data, &items)
+		}
+		writeJSON(w, http.StatusOK, items)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *server) messagesHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
+	switch r.Method {
+	case http.MethodPost:
+		r.Body = http.MaxBytesReader(w, r.Body, 64<<10)
+		defer r.Body.Close()
+		var item contactMessage
+		if json.NewDecoder(r.Body).Decode(&item) != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Некорректные данные"})
+			return
+		}
+		item.ID = cleanField(item.ID, 100)
+		item.SubmittedAt = cleanField(item.SubmittedAt, 60)
+		item.Name = cleanField(item.Name, 180)
+		item.Email = cleanField(item.Email, 240)
+		item.Subject = cleanField(item.Subject, 180)
+		item.Message = cleanField(item.Message, 4000)
+		if item.Name == "" || item.Email == "" || item.Subject == "" || item.Message == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Заполните все поля"})
+			return
+		}
+		s.messagesMux.Lock()
+		defer s.messagesMux.Unlock()
+		items := []contactMessage{}
+		if data, err := os.ReadFile(s.messagesFile); err == nil {
+			_ = json.Unmarshal(data, &items)
+		}
+		items = append([]contactMessage{item}, items...)
+		data, _ := json.MarshalIndent(items, "", "  ")
+		if err := os.WriteFile(s.messagesFile, append(data, '\n'), 0600); err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить сообщение"})
+			return
+		}
+		writeJSON(w, http.StatusCreated, map[string]bool{"ok": true})
+	case http.MethodGet:
+		if !s.validToken(r) {
+			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "Требуется авторизация"})
+			return
+		}
+		s.messagesMux.RLock()
+		defer s.messagesMux.RUnlock()
+		items := []contactMessage{}
+		if data, err := os.ReadFile(s.messagesFile); err == nil {
 			_ = json.Unmarshal(data, &items)
 		}
 		writeJSON(w, http.StatusOK, items)
@@ -384,6 +444,7 @@ func main() {
 		root:             root,
 		dataFile:         filepath.Join(root, "backend", "data", "content.json"),
 		applicationsFile: filepath.Join(root, "backend", "data", "applications.json"),
+		messagesFile:     filepath.Join(root, "backend", "data", "messages.json"),
 		credentialsFile:  filepath.Join(root, "backend", "data", "credentials.json"),
 		login:            envOr("ADMIN_LOGIN", "admin"),
 		password:         envOr("ADMIN_PASSWORD", "Rhazes2026!"),
@@ -398,6 +459,7 @@ func main() {
 	mux.HandleFunc("/api/admin/login", app.loginHandler)
 	mux.HandleFunc("/api/admin/credentials", app.credentialsHandler)
 	mux.HandleFunc("/api/applications", app.applicationsHandler)
+	mux.HandleFunc("/api/messages", app.messagesHandler)
 	mux.HandleFunc("/", app.staticHandler)
 	port := envOr("PORT", "4173")
 	log.Printf("Rhazes Pharma: http://localhost:%s", port)
