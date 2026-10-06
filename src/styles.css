@@ -757,10 +757,12 @@ nav a.active {
 .section-head > p {
   max-width: 430px;
 }
-.directions .section-head {
+.directions .section-head,
+.quality-scope .section-head {
   align-items: flex-start;
 }
-.directions .section-head > p {
+.directions .section-head > p,
+.quality-scope .section-head > p {
   margin-top: 76px;
 }
 .cap-grid {
@@ -4284,7 +4286,8 @@ footer {
   .section-head {
     display: block;
   }
-  .directions .section-head > p {
+  .directions .section-head > p,
+  .quality-scope .section-head > p {
     margin-top: 24px;
   }
   .quality-call,
@@ -4404,7 +4407,8 @@ footer {
     font-size: clamp(34px, 11vw, 48px);
     overflow-wrap: anywhere;
   }
-  .directions .section-head > p {
+  .directions .section-head > p,
+  .quality-scope .section-head > p {
     margin-top: 18px;
   }
   .pagehero h1 {
