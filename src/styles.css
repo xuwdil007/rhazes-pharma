@@ -4469,6 +4469,14 @@ footer {
   .hero h1 em {
     display: block;
   }
+  .hero-content > p {
+    width: 190px;
+    max-width: 72vw;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+  }
   .admin-image-field {
     grid-template-columns: 1fr;
   }
