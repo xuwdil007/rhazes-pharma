@@ -13,3 +13,6 @@ Thumbs.db
 backups/
 backend/data/credentials.json
 backend/data/messages.json
+backend/data/site.db
+backend/data/site.db-shm
+backend/data/site.db-wal

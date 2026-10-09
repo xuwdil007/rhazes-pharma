@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
+	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -21,9 +22,9 @@ import (
 const maxBodySize = 16 << 20
 
 type server struct {
-	root, dataFile, applicationsFile, messagesFile, credentialsFile, secret string
-	login, password, passwordSalt, passwordHash                             string
-	contentMux, applicationsMux, messagesMux, authMux                       sync.RWMutex
+	root, secret, login, password, passwordSalt, passwordHash string
+	db                                                        *sql.DB
+	authMux                                                   sync.RWMutex
 }
 
 type storedCredentials struct {
@@ -52,12 +53,7 @@ func newPasswordSalt() (string, error) {
 }
 
 func (s *server) loadCredentials() {
-	data, err := os.ReadFile(s.credentialsFile)
-	if err != nil {
-		return
-	}
-	var saved storedCredentials
-	if json.Unmarshal(data, &saved) == nil && saved.Login != "" && saved.PasswordSalt != "" && saved.PasswordHash != "" {
+	if saved, ok := s.loadStoredCredentials(); ok {
 		s.login = saved.Login
 		s.password = ""
 		s.passwordSalt = saved.PasswordSalt
@@ -125,15 +121,7 @@ func (s *server) applicationsHandler(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Заполните все поля"})
 			return
 		}
-		s.applicationsMux.Lock()
-		defer s.applicationsMux.Unlock()
-		items := []application{}
-		if data, err := os.ReadFile(s.applicationsFile); err == nil {
-			_ = json.Unmarshal(data, &items)
-		}
-		items = append([]application{item}, items...)
-		data, _ := json.MarshalIndent(items, "", "  ")
-		if err := os.WriteFile(s.applicationsFile, append(data, '\n'), 0600); err != nil {
+		if err := s.saveApplication(item); err != nil {
 			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить отклик"})
 			return
 		}
@@ -143,11 +131,10 @@ func (s *server) applicationsHandler(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "Требуется авторизация"})
 			return
 		}
-		s.applicationsMux.RLock()
-		defer s.applicationsMux.RUnlock()
-		items := []application{}
-		if data, err := os.ReadFile(s.applicationsFile); err == nil {
-			_ = json.Unmarshal(data, &items)
+		items, err := s.listApplications()
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось загрузить отклики"})
+			return
 		}
 		writeJSON(w, http.StatusOK, items)
 	default:
@@ -176,15 +163,7 @@ func (s *server) messagesHandler(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Заполните все поля"})
 			return
 		}
-		s.messagesMux.Lock()
-		defer s.messagesMux.Unlock()
-		items := []contactMessage{}
-		if data, err := os.ReadFile(s.messagesFile); err == nil {
-			_ = json.Unmarshal(data, &items)
-		}
-		items = append([]contactMessage{item}, items...)
-		data, _ := json.MarshalIndent(items, "", "  ")
-		if err := os.WriteFile(s.messagesFile, append(data, '\n'), 0600); err != nil {
+		if err := s.saveMessage(item); err != nil {
 			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить сообщение"})
 			return
 		}
@@ -194,11 +173,10 @@ func (s *server) messagesHandler(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "Требуется авторизация"})
 			return
 		}
-		s.messagesMux.RLock()
-		defer s.messagesMux.RUnlock()
-		items := []contactMessage{}
-		if data, err := os.ReadFile(s.messagesFile); err == nil {
-			_ = json.Unmarshal(data, &items)
+		items, err := s.listMessages()
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось загрузить сообщения"})
+			return
 		}
 		writeJSON(w, http.StatusOK, items)
 	default:
@@ -241,29 +219,6 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(value)
-}
-
-func (s *server) readContent() map[string]string {
-	s.contentMux.RLock()
-	defer s.contentMux.RUnlock()
-	result := map[string]string{}
-	if data, err := os.ReadFile(s.dataFile); err == nil {
-		_ = json.Unmarshal(data, &result)
-	}
-	return result
-}
-
-func (s *server) writeContent(content map[string]string) error {
-	s.contentMux.Lock()
-	defer s.contentMux.Unlock()
-	data, err := json.MarshalIndent(content, "", "  ")
-	if err != nil {
-		return err
-	}
-	if err := os.MkdirAll(filepath.Dir(s.dataFile), 0755); err != nil {
-		return err
-	}
-	return os.WriteFile(s.dataFile, append(data, '\n'), 0644)
 }
 
 func (s *server) signature(payload string) string {
@@ -404,13 +359,8 @@ func (s *server) credentialsHandler(w http.ResponseWriter, r *http.Request) {
 		PasswordSalt: salt,
 		PasswordHash: hashPassword(incoming.Password, salt),
 	}
-	data, err := json.MarshalIndent(saved, "", "  ")
-	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Не удалось сохранить настройки"})
-		return
-	}
 	s.authMux.Lock()
-	if err = os.WriteFile(s.credentialsFile, append(data, '\n'), 0600); err == nil {
+	if err = s.saveStoredCredentials(saved); err == nil {
 		s.login = saved.Login
 		s.password = ""
 		s.passwordSalt = saved.PasswordSalt
@@ -440,15 +390,17 @@ func main() {
 		log.Fatal(err)
 	}
 	loadDotEnv(filepath.Join(root, ".env"))
+	db, err := openDatabase(root)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 	app := &server{
-		root:             root,
-		dataFile:         filepath.Join(root, "backend", "data", "content.json"),
-		applicationsFile: filepath.Join(root, "backend", "data", "applications.json"),
-		messagesFile:     filepath.Join(root, "backend", "data", "messages.json"),
-		credentialsFile:  filepath.Join(root, "backend", "data", "credentials.json"),
-		login:            envOr("ADMIN_LOGIN", "admin"),
-		password:         envOr("ADMIN_PASSWORD", "Rhazes2026!"),
-		secret:           envOr("ADMIN_SECRET", "change-this-secret-in-production"),
+		root:     root,
+		db:       db,
+		login:    envOr("ADMIN_LOGIN", "admin"),
+		password: envOr("ADMIN_PASSWORD", "Rhazes2026!"),
+		secret:   envOr("ADMIN_SECRET", "change-this-secret-in-production"),
 	}
 	app.loadCredentials()
 	mux := http.NewServeMux()

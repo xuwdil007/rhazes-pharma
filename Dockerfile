@@ -11,8 +11,10 @@ RUN npm run build
 
 FROM golang:1.25-alpine AS backend
 WORKDIR /build
-COPY backend/server.go ./server.go
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /server server.go
+COPY go.mod go.sum ./
+RUN go mod download
+COPY backend/*.go ./backend/
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /server ./backend
 
 FROM alpine:3.22 AS runtime
 RUN apk add --no-cache ca-certificates tzdata \
@@ -22,9 +24,7 @@ WORKDIR /app
 COPY --from=frontend --chown=app:app /app/dist ./dist
 COPY --from=backend /server /usr/local/bin/rhazes-server
 COPY --chown=app:app backend/data/content.json ./backend/data/content.json
-RUN printf '[]\n' > backend/data/applications.json \
-    && printf '[]\n' > backend/data/messages.json \
-    && chown -R app:app backend/data
+RUN chown -R app:app backend/data
 ENV PORT=4173 TZ=Asia/Dushanbe
 USER app
 EXPOSE 4173
