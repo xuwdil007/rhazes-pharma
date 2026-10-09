@@ -42,7 +42,7 @@ if ! curl -fsS --max-time 10 "http://${UPSTREAM_HOST}:${UPSTREAM_PORT}" >/dev/nu
   echo "  http://${UPSTREAM_HOST}:${UPSTREAM_PORT}"
   echo
   echo "Make sure Docker is running and your compose port mapping is:"
-  echo '  127.0.0.1:8080:4173'
+  echo '  127.0.0.1:8080:8080'
   exit 1
 fi
 
@@ -123,7 +123,7 @@ echo
 echo "IMPORTANT:"
 echo "Docker should preferably expose the app only on localhost:"
 echo '  ports:'
-echo '    - "127.0.0.1:8080:4173"'
+echo '    - "127.0.0.1:8080:8080"'
 echo
 echo "For a future domain, point the DNS A record to this server,"
 echo "then replace 'server_name _;' with the domain and configure HTTPS."

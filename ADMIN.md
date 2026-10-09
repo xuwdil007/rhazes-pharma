@@ -7,17 +7,17 @@ npm run build
 npm start
 ```
 
-Сайт: `http://localhost:4173`
+Сайт: `http://localhost:4173` (либо `http://localhost:8000` при `npm run dev`)
 
 Админка: `http://localhost:4173/#/admin`
 
 ## Первый вход
 
 - Логин: `admin`
-- Пароль: `Rhazes2026!`
+- Пароль: значение `ADMIN_PASSWORD` из `.env`
 
 Перед публикацией создайте файл `.env` по образцу `.env.example` и обязательно
-замените `ADMIN_PASSWORD` и `ADMIN_SECRET`.
+задайте надёжный `ADMIN_PASSWORD` и выполните `php artisan key:generate`.
 
 ## Редактирование
 

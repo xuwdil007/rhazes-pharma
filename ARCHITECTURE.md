@@ -2,12 +2,15 @@
 
 
 Разес Фарма/
-├── backend/
-│   ├── server.go          # Go API, авторизация и production-сервер
-│   ├── storage.go         # SQLite-хранилище и миграция старых данных
-│   └── data/
+├── app/
+│   ├── Http/Controllers/Api/ # Laravel API-контроллеры
+│   ├── Http/Middleware/      # Проверка токена администратора
+│   └── Models/               # Eloquent-модели SQLite
+├── backend/data/
 │       ├── content.json   # Исходный контент и источник первой миграции
 │       └── site.db        # Рабочая база SQLite (создаётся автоматически)
+├── database/migrations/   # Схема базы и перенос старых JSON-данных
+├── routes/                # Web и API-маршруты Laravel
 ├── public/assets/         # Логотип и изображения сайта
 ├── src/
 │   ├── admin/
@@ -44,5 +47,5 @@
 
 `src/main.jsx` подключает приложение, а `src/app/App.jsx` содержит только
 маршрутизацию. Публичные страницы, переиспользуемые компоненты и CMS разделены
-по самостоятельным модулям. Серверный код не входит во frontend-сборку и
-полностью находится в `backend/`.
+по самостоятельным модулям. Backend реализован на PHP 8.3+ и Laravel 13,
+а доступ к SQLite выполняется через Eloquent и Query Builder.

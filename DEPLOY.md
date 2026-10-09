@@ -1,6 +1,6 @@
 # Развёртывание РАЗЕС ФАРМА
 
-Docker собирает React/Vite и Go API в один образ. В серверной сборке отключён
+Docker собирает React/Vite и Laravel 13 API в один образ PHP 8.4 + Apache. В серверной сборке отключён
 статический режим GitHub Pages: CMS и отклики сохраняются на сервере.
 Нужны Docker Engine и Docker Compose v2. Команды выполняются из папки проекта.
 
@@ -11,9 +11,9 @@ cp .env.example .env
 ```
 
 В Windows PowerShell вместо `cp` можно использовать `Copy-Item .env.example .env`.
-Задайте в `.env` собственные `ADMIN_LOGIN`, `ADMIN_PASSWORD` и `ADMIN_SECRET`.
-Не используйте значения из примера. Секрет можно создать командой
-`openssl rand -hex 32`. Не публикуйте `.env` в Git.
+Задайте в `.env` собственные `ADMIN_LOGIN`, `ADMIN_PASSWORD` и `APP_KEY`.
+Не используйте значения из примера. Ключ создаётся командой
+`php artisan key:generate`. Не публикуйте `.env` в Git.
 
 ## Локальная проверка
 
@@ -24,12 +24,12 @@ docker compose logs -f app
 ```
 
 Сайт: http://localhost:8080/ — админка: http://localhost:8080/#/admin.
-Вход с логином и паролем из `.env`. Node.js и Go на сервер устанавливать не нужно.
+Вход с логином и паролем из `.env`. Node.js, PHP и Composer на сервер устанавливать не нужно.
 
 ## Сервер с доменом и HTTPS
 
 1. Скопируйте проект на сервер (без `node_modules`, `.env` и персональных данных).
-2. Создайте `.env` и задайте свои пароль и секрет.
+2. Создайте `.env`, задайте пароль администратора и уникальный `APP_KEY`.
 3. Направьте DNS-запись A домена на IP сервера; если используете AAAA, IPv6 также
    должен вести на этот сервер. Укажите домен без `https://` в `SITE_DOMAIN`.
 4. Откройте входящие TCP-порты 80 и 443; убедитесь, что они не заняты.
@@ -72,7 +72,7 @@ docker compose stop
 ```bash
 mkdir -p backups
 docker compose stop app
-docker compose cp app:/app/backend/data ./backups/data
+docker compose cp app:/var/www/html/backend/data ./backups/data
 docker compose start app
 ```
 
@@ -83,9 +83,9 @@ docker compose start app
 
 ```bash
 docker compose stop app
-docker compose cp ./backups/data/. app:/app/backend/data/
+docker compose cp ./backups/data/. app:/var/www/html/backend/data/
 docker compose start app
 ```
 
-После переноса убедитесь, что файлы доступны на запись пользователю контейнера
-с UID/GID `10001`. Не меняйте владельца всего проекта или системных каталогов.
+После переноса убедитесь, что каталог базы доступен на запись пользователю
+`www-data` внутри контейнера. Не меняйте владельца всего проекта или системных каталогов.

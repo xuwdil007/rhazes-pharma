@@ -1,4 +1,11 @@
 node_modules/
+vendor/
+public/build/
+bootstrap/cache/*.php
+storage/*.key
+storage/logs/*.log
+database/database.sqlite
+.phpunit.result.cache
 dist/
 .env
 .env.*

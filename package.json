@@ -1,9 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"go run backend/server.go\" \"vite\"",
+    "dev": "concurrently -k \"php artisan serve\" \"vite\"",
     "build": "vite build",
-    "start": "go run backend/server.go",
+    "start": "php artisan serve --host=0.0.0.0 --port=4173",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
+    "laravel-vite-plugin": "latest",
     "prettier": "^3.9.6"
   }
 }

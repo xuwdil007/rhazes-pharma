@@ -6,20 +6,34 @@ services:
     restart: unless-stopped
     init: true
     ports:
-      - "${BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-8080}:4173"
+      - "${BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-8080}:8080"
     environment:
-      PORT: "4173"
+      APP_NAME: "Rhazes Pharma"
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: "${APP_URL:-http://localhost:8080}"
+      APP_TIMEZONE: Asia/Dushanbe
+      APP_LOCALE: ru
+      APP_KEY: "${APP_KEY:?Set APP_KEY in .env}"
+      LOG_CHANNEL: stderr
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/backend/data/site.db
       TZ: Asia/Dushanbe
       ADMIN_LOGIN: "${ADMIN_LOGIN:-admin}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}"
-      ADMIN_SECRET: "${ADMIN_SECRET:?Set ADMIN_SECRET in .env}"
     volumes:
-      - app_data:/app/backend/data
+      - app_data:/var/www/html/backend/data
     read_only: true
     tmpfs:
       - /tmp
-    cap_drop:
-      - ALL
+      - /var/www/html/storage/framework
+      - /var/www/html/storage/logs
+      - /var/www/html/bootstrap/cache
+      - /var/run/apache2
+      - /var/lock/apache2
     security_opt:
       - no-new-privileges:true
     logging:
